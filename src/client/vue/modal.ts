@@ -42,31 +42,33 @@ export const Modal = defineComponent({
       modal.value?.close()
     }
 
-    // Open / close the native dialog reacting to isOpen.
-    watch(
-      () => modal.value?.isOpen ?? false,
-      (isOpen) => {
-        const el = dialog.value
-        if (!el) return
-        if (isOpen && !el.open) {
-          if (typeof el.showModal === 'function') {
-            el.showModal()
-            // Ensure focus lands inside the dialog.
-            if (!el.contains(document.activeElement)) {
-              el.querySelector<HTMLElement>(
-                '[autofocus], button, [href], input, select, textarea'
-              )?.focus()
-            }
-          } else {
-            el.open = true // jsdom/happy-dom fallback
+    // Open / close the native dialog reacting to isOpen. The initial open is
+    // driven from onMounted (below) — NOT an immediate watcher — because an
+    // immediate watch fires synchronously during setup, before the dialog ref is
+    // attached, so showModal() would be skipped and never re-run (isOpen stays
+    // true). The watcher here only handles subsequent isOpen transitions.
+    const syncDialog = (isOpen: boolean) => {
+      const el = dialog.value
+      if (!el) return
+      if (isOpen && !el.open) {
+        if (typeof el.showModal === 'function') {
+          el.showModal()
+          // Ensure focus lands inside the dialog.
+          if (!el.contains(document.activeElement)) {
+            el.querySelector<HTMLElement>(
+              '[autofocus], button, [href], input, select, textarea'
+            )?.focus()
           }
-        } else if (!isOpen && el.open) {
-          if (typeof el.close === 'function') el.close()
-          else el.open = false
+        } else {
+          el.open = true // jsdom/happy-dom fallback
         }
-      },
-      { immediate: true, flush: 'post' }
-    )
+      } else if (!isOpen && el.open) {
+        if (typeof el.close === 'function') el.close()
+        else el.open = false
+      }
+    }
+
+    watch(() => modal.value?.isOpen ?? false, syncDialog, { flush: 'post' })
 
     // Close on Esc for the top-most modal (unless closeExplicitly). Handled at
     // the document level so it works regardless of where focus currently is.
@@ -92,9 +94,11 @@ export const Modal = defineComponent({
     )
 
     // Lock body scroll while open; ref-counted so stacked modals restore the
-    // original value only once the last one closes.
+    // original value only once the last one closes. Also drive the initial open
+    // here, where the dialog ref is guaranteed attached.
     onMounted(() => {
       unlockScroll = lockBodyScroll()
+      syncDialog(modal.value?.isOpen ?? false)
     })
 
     onBeforeUnmount(() => {

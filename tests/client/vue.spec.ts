@@ -125,6 +125,23 @@ test.group('vue | ModalLink + ModalRoot', (group) => {
     assert.include(wrapper.text(), 'User: Jane')
   })
 
+  test('opens the native <dialog> after mount (open=true)', async ({ assert }) => {
+    // Regression: the initial open must run after the dialog ref is attached
+    // (onMounted), not from an immediate watcher that fires pre-mount and is
+    // skipped — which left the dialog rendered but never shown (open=false).
+    const { wrapper } = mountApp({
+      client: clientReturning({ component: 'users/show', props: { name: 'Jane' }, key: 'k1' }),
+      ui: () => h(ModalLink, { href: '/users/1' }, { default: () => 'Open' }),
+    })
+
+    await clickText(wrapper, 'Open')
+    await tick()
+
+    const dialog = document.querySelector('dialog.im-dialog') as HTMLDialogElement | null
+    assert.isNotNull(dialog)
+    assert.isTrue(dialog!.open)
+  })
+
   test('useModal().close() removes the modal from the stack', async ({ assert }) => {
     const { wrapper } = mountApp({
       client: clientReturning({ component: 'users/show', props: { name: 'Jane' }, key: 'k1' }),
