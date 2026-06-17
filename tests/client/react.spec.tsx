@@ -64,11 +64,10 @@ function renderApp(options: {
     <ModalStackProvider
       httpClient={client}
       resolveComponent={resolve as never}
-      usePageHook={() => options.page ?? basePage}
       navigate={options.navigate}
     >
       {options.ui}
-      <ModalRoot />
+      <ModalRoot usePageHook={() => options.page ?? basePage} />
     </ModalStackProvider>
   )
 }

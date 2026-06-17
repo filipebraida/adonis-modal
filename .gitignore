@@ -7,3 +7,6 @@ coverage
 build
 dist
 package-lock.json
+
+# Local example app (not committed)
+playground

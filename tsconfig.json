@@ -4,5 +4,6 @@
     "rootDir": "./",
     "outDir": "./build",
     "jsx": "react-jsx"
-  }
+  },
+  "exclude": ["build", "node_modules", "coverage", "playground"]
 }

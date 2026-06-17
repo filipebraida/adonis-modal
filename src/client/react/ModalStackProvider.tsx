@@ -7,11 +7,12 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
   useSyncExternalStore,
   type ComponentType,
   type ReactNode,
 } from 'react'
-import { router as inertiaRouter, usePage as inertiaUsePage } from '@inertiajs/react'
+import { router as inertiaRouter } from '@inertiajs/react'
 
 import { createFetchClient } from '../core/fetch_client.ts'
 import { requestModal, type HttpClientLike } from '../core/open.ts'
@@ -26,17 +27,16 @@ export interface ModalStackProviderProps {
   httpClient?: HttpClientLike
   /** Resolves a component name to a component. Defaults to Inertia's resolver. */
   resolveComponent?: (name: string) => Promise<ComponentType>
-  /** Reads the current Inertia page. Defaults to Inertia's usePage(). */
-  usePageHook?: () => PageInfo
   /** Navigates the browser (used when closing a deep-linked modal). */
   navigate?: (url: string) => void
 }
+
+const EMPTY_PAGE: PageInfo = { component: '', url: '', props: {} }
 
 export function ModalStackProvider({
   children,
   httpClient,
   resolveComponent,
-  usePageHook,
   navigate,
 }: ModalStackProviderProps) {
   const stackRef = useRef<ModalStack | null>(null)
@@ -63,9 +63,15 @@ export function ModalStackProvider({
     [navigate]
   )
 
-  const page = (usePageHook ?? (inertiaUsePage as unknown as () => PageInfo))()
+  /**
+   * The current Inertia page is fed in by <ModalRoot> (which lives inside the
+   * Inertia app where usePage() works), so the provider can wrap <App> at the
+   * root without needing the page context itself.
+   */
+  const [page, setPage] = useState<PageInfo>(EMPTY_PAGE)
   const pageRef = useRef(page)
   pageRef.current = page
+  const syncPage = useCallback((next: PageInfo) => setPage(next), [])
 
   const close = useCallback(
     (id: string) => {
@@ -208,6 +214,7 @@ export function ModalStackProvider({
     visitModal: visit,
     close,
     reload,
+    syncPage,
   }
 
   return <ModalStackContext.Provider value={value}>{children}</ModalStackContext.Provider>

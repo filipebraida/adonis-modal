@@ -16,6 +16,8 @@ export interface ModalStackContextValue {
   visitModal: (href: string, options?: VisitOptions) => Promise<ModalEntry>
   close: (id: string) => void
   reload: (id: string, options?: ReloadOptions) => Promise<void>
+  /** Feed the current Inertia page into the provider (called by ModalRoot). */
+  syncPage: (page: PageInfo) => void
 }
 
 export const ModalStackContext = createContext<ModalStackContextValue | null>(null)
