@@ -1,35 +1,35 @@
 - generic [ref=e1]:
-  - generic [ref=e2]:
-    - banner [ref=e3]:
-      - generic [ref=e4]:
-        - link [ref=e6] [cursor=pointer]:
-          - /url: /
-          - img [ref=e7]
-        - navigation [ref=e10]:
-          - link "Signup" [ref=e11] [cursor=pointer]:
-            - /url: /signup
-          - link "Login" [ref=e12] [cursor=pointer]:
-            - /url: /login
-    - main [ref=e13]:
-      - generic [ref=e14]:
-        - generic [ref=e15]:
-          - heading "adonis-modal demo" [level=1] [ref=e16]
-          - paragraph [ref=e17]: "Count from the server: 3"
-          - generic [ref=e18]:
-            - link "Open user modal" [ref=e19] [cursor=pointer]:
-              - /url: /modal-demo/user
-            - link "Open as slideover" [ref=e20] [cursor=pointer]:
-              - /url: /modal-demo/user
-        - dialog [ref=e21]:
-          - generic [ref=e22]:
-            - button "Close" [active] [ref=e23] [cursor=pointer]: ×
-            - generic [ref=e24]:
-              - heading "User" [level=2] [ref=e25]
-              - paragraph [ref=e26]:
-                - text: "Name:"
-                - strong [ref=e27]: Ada Lovelace
-              - button "Close" [ref=e28]
-  - generic:
-    - region "Notifications"
-  - generic:
-    - region "Notifications"
+    - generic [ref=e2]:
+        - banner [ref=e3]:
+            - generic [ref=e4]:
+                - link [ref=e6] [cursor=pointer]:
+                    - /url: /
+                    - img [ref=e7]
+                - navigation [ref=e10]:
+                    - link "Signup" [ref=e11] [cursor=pointer]:
+                        - /url: /signup
+                    - link "Login" [ref=e12] [cursor=pointer]:
+                        - /url: /login
+        - main [ref=e13]:
+            - generic [ref=e14]:
+                - generic [ref=e15]:
+                    - heading "adonis-modal demo" [level=1] [ref=e16]
+                    - paragraph [ref=e17]: 'Count from the server: 3'
+                    - generic [ref=e18]:
+                        - link "Open user modal" [ref=e19] [cursor=pointer]:
+                            - /url: /modal-demo/user
+                        - link "Open as slideover" [ref=e20] [cursor=pointer]:
+                            - /url: /modal-demo/user
+                - dialog [ref=e21]:
+                    - generic [ref=e22]:
+                        - button "Close" [active] [ref=e23] [cursor=pointer]: ×
+                        - generic [ref=e24]:
+                            - heading "User" [level=2] [ref=e25]
+                            - paragraph [ref=e26]:
+                                - text: 'Name:'
+                                - strong [ref=e27]: Ada Lovelace
+                            - button "Close" [ref=e28]
+    - generic:
+        - region "Notifications"
+    - generic:
+        - region "Notifications"

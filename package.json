@@ -9,14 +9,16 @@
   "files": [
     "build",
     "!build/bin",
-    "!build/tests"
+    "!build/tests",
+    "styles.css"
   ],
   "main": "build/index.js",
   "exports": {
     ".": "./build/index.js",
     "./types": "./build/src/types.js",
     "./modal_provider": "./build/providers/modal_provider.js",
-    "./react": "./build/src/client/react/index.js"
+    "./react": "./build/src/client/react/index.js",
+    "./styles.css": "./styles.css"
   },
   "scripts": {
     "copy:templates": "copyfiles \"stubs/**/*.stub\" build",
@@ -105,6 +107,7 @@
     "entry": [
       "./index.ts",
       "./configure.ts",
+      "./stubs/main.ts",
       "./src/types.ts",
       "./providers/modal_provider.ts",
       "./src/client/react/index.ts"
