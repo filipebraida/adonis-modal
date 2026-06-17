@@ -40,11 +40,13 @@ The modal is delivered as a shared `modal` prop on a normal Inertia page, so:
 ## Install
 
 ```sh
-npm i adonis-inertia-modal
-node ace configure adonis-inertia-modal
+node ace add adonis-inertia-modal
 ```
 
-`configure` registers the provider and prints the wiring steps below.
+`add` installs the package (with your detected package manager) and runs the
+`configure` hook, which registers the provider and prints the wiring steps below.
+
+> Prefer doing it manually? `npm i adonis-inertia-modal && node ace configure adonis-inertia-modal`.
 
 ### Wire the frontend
 
