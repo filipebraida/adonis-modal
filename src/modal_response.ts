@@ -9,6 +9,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { InertiaHeaders } from '@adonisjs/inertia'
 
 import { ModalHeaders } from './headers.ts'
+import { resolveModalProps, type ResolveModalPropsOptions } from './resolve_modal_props.ts'
 import type { ModalPayload, ModalProps } from './types.ts'
 
 /**
@@ -132,7 +133,7 @@ export class ModalResponse {
      * Share the modal envelope so whichever backdrop renders carries it as the
      * `modal` prop.
      */
-    this.inertia.share({ modal: this.#payload() })
+    this.inertia.share({ modal: await this.#buildPayload() })
 
     /**
      * Path A — opened via link: the client partially reloads the current
@@ -194,16 +195,53 @@ export class ModalResponse {
   }
 
   /**
-   * Build the serialized modal envelope.
+   * Build the modal envelope, resolving defer/optional/merge/always wrappers and
+   * dot-notation inside `modal.props`.
    */
-  #payload(): ModalPayload {
-    return {
+  async #buildPayload(): Promise<ModalPayload> {
+    const resolved = await resolveModalProps(this.props, this.#resolveOptions())
+
+    const payload: ModalPayload = {
       component: this.component,
       baseUrl: this.#resolveBaseUrl(),
       redirectUrl: this.#redirectUrl(),
-      props: this.#unpackDotProps(this.props),
+      props: resolved.props,
       key: this.#modalKey(),
     }
+
+    if (Object.keys(resolved.deferred).length > 0) {
+      payload.deferred = resolved.deferred
+    }
+    if (resolved.mergeProps.length > 0) {
+      payload.mergeProps = resolved.mergeProps
+    }
+    if (resolved.deepMergeProps.length > 0) {
+      payload.deepMergeProps = resolved.deepMergeProps
+    }
+
+    return payload
+  }
+
+  /**
+   * Derive prop-resolution options from the request: a partial reload targeting
+   * `modal.props.*` becomes a cherry-pick of those (relative) modal prop names.
+   */
+  #resolveOptions(): ResolveModalPropsOptions {
+    const prefix = 'modal.props.'
+    const strip = (entries: string[]) =>
+      entries.filter((entry) => entry.startsWith(prefix)).map((entry) => entry.slice(prefix.length))
+
+    const only = strip(this.#headerList(InertiaHeaders.PartialOnly))
+    if (only.length > 0) {
+      return { partial: true, only }
+    }
+
+    const except = strip(this.#headerList(InertiaHeaders.PartialExcept))
+    if (except.length > 0) {
+      return { partial: true, except }
+    }
+
+    return { partial: false }
   }
 
   /**
@@ -247,18 +285,13 @@ export class ModalResponse {
       return false
     }
 
-    const only = this.#headerList(InertiaHeaders.PartialOnly)
-    if (only.length) {
-      const targetsModalChild = only.some((entry) => entry.startsWith('modal.'))
-      return targetsModalChild && !only.includes('modal')
-    }
+    const targetsModalProps = (entries: string[]) =>
+      entries.some((entry) => entry.startsWith('modal.props.'))
 
-    const except = this.#headerList(InertiaHeaders.PartialExcept)
-    if (except.length) {
-      return !except.includes('modal')
-    }
-
-    return false
+    return (
+      targetsModalProps(this.#headerList(InertiaHeaders.PartialOnly)) ||
+      targetsModalProps(this.#headerList(InertiaHeaders.PartialExcept))
+    )
   }
 
   #hasValidationErrors(): boolean {
@@ -275,38 +308,6 @@ export class ModalResponse {
       .split(',')
       .map((value) => value.trim())
       .filter(Boolean)
-  }
-
-  /**
-   * Resolve dot-notation prop keys into nested objects and evaluate any
-   * function-valued props. Mirrors emargareten/inertia-modal so partial reloads
-   * of `modal.props.*` work despite the adapter only cherry-picking top-level
-   * props (see docs/design/inertia-v3-compat.md).
-   */
-  #unpackDotProps(props: ModalProps): Record<string, unknown> {
-    const result: Record<string, unknown> = {}
-
-    for (const [key, rawValue] of Object.entries(props)) {
-      const value = typeof rawValue === 'function' ? (rawValue as () => unknown)() : rawValue
-
-      if (!key.includes('.')) {
-        result[key] = value
-        continue
-      }
-
-      const segments = key.split('.')
-      const last = segments.pop()!
-      let cursor = result
-      for (const segment of segments) {
-        if (typeof cursor[segment] !== 'object' || cursor[segment] === null) {
-          cursor[segment] = {}
-        }
-        cursor = cursor[segment] as Record<string, unknown>
-      }
-      cursor[last] = value
-    }
-
-    return result
   }
 
   #resolveBaseUrl(): string {

@@ -123,4 +123,45 @@ test.group('ModalResponse | integration', (group) => {
 
     assert.notEqual(page.props.modal.key, 'previous-key')
   })
+
+  test('omits a deferred modal prop on open and lists it in payload.deferred', async ({
+    assert,
+  }) => {
+    const { inertia } = await modalContext({
+      [InertiaHeaders.Inertia]: 'true',
+      [InertiaHeaders.PartialComponent]: 'users/index',
+      [InertiaHeaders.PartialOnly]: 'modal',
+    })
+
+    const page: any = await inertia
+      .modal('users/show', {
+        user: { id: 1 },
+        stats: (inertia as any).defer(() => ({ visits: 5 })),
+      })
+      .baseRoute('users.index')
+
+    assert.equal(page.props.modal.props.user.id, 1)
+    assert.notProperty(page.props.modal.props, 'stats')
+    assert.deepEqual(page.props.modal.deferred, { default: ['stats'] })
+  })
+
+  test('computes a deferred modal prop on a sparse reload', async ({ assert }) => {
+    const { inertia } = await modalContext({
+      [InertiaHeaders.Inertia]: 'true',
+      [InertiaHeaders.PartialComponent]: 'users/index',
+      [InertiaHeaders.PartialOnly]: 'modal,modal.props.stats',
+      'x-inertia-modal-key': 'kept-key',
+    })
+
+    const page: any = await inertia
+      .modal('users/show', {
+        user: { id: 1 },
+        stats: (inertia as any).defer(() => ({ visits: 5 })),
+      })
+      .baseRoute('users.index')
+
+    assert.deepEqual(page.props.modal.props.stats, { visits: 5 })
+    assert.notProperty(page.props.modal.props, 'user')
+    assert.equal(page.props.modal.key, 'kept-key')
+  })
 })

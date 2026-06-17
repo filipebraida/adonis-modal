@@ -29,4 +29,10 @@ export interface ModalPayload {
   props: Record<string, unknown>
   /** Unique-per-instance key (preserved across sparse reloads / validation). */
   key: string
+  /** Deferred prop names by group, for the client's <Deferred> component. */
+  deferred?: Record<string, string[]>
+  /** Modal prop names to shallow-merge on the client. */
+  mergeProps?: string[]
+  /** Modal prop names to deep-merge on the client. */
+  deepMergeProps?: string[]
 }
