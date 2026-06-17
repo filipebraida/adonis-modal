@@ -1,3 +1,5 @@
+/// <reference types="@adonisjs/session/session_middleware" />
+
 /*
  * adonis-inertia-modal
  *
@@ -28,8 +30,9 @@ class ModalSerializer extends BaseSerializer {
 const modalSerializer = new ModalSerializer()
 
 /**
- * Minimal surface of the per-request Inertia instance we rely on. Keeping it
- * structural avoids a hard type coupling with the adapter's generic `Inertia`.
+ * Minimal surface of the per-request Inertia instance we rely on. The adapter's
+ * real `Inertia` type can't be used here: its `share()` requires `JSONDataTypes`
+ * (an index signature) which our typed `ModalPayload` envelope doesn't satisfy.
  */
 export interface InertiaLike {
   share(state: Record<string, unknown>): unknown
@@ -261,7 +264,7 @@ export class ModalResponse {
    * top-level props.
    */
   async #serializeProps(props: Record<string, unknown>): Promise<Record<string, unknown>> {
-    const resolver = (this.ctx as any).containerResolver
+    const resolver = this.ctx.containerResolver
     const entries = await Promise.all(
       Object.entries(props).map(async ([key, value]) => {
         if (value === null || value === undefined) {
@@ -365,11 +368,13 @@ export class ModalResponse {
   }
 
   #hasValidationErrors(): boolean {
-    const session = (this.ctx as any).session
+    const session = this.ctx.session
     if (!session) {
       return false
     }
-    const errors = session.flashMessages?.get('inputErrorsBag')
+    const errors = session.flashMessages.get('inputErrorsBag') as
+      | Record<string, unknown>
+      | undefined
     return !!errors && Object.keys(errors).length > 0
   }
 
