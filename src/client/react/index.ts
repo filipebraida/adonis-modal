@@ -13,7 +13,14 @@ export { HeadlessModal, type HeadlessModalProps } from './HeadlessModal.tsx'
 export { useResolvedModal } from './use_modal.ts'
 export { default as useModal, type UseModalReturn } from './use_modal.ts'
 export { useModalStack, useModalIndex, type ModalStackContextValue } from './context.ts'
-export type { PageInfo, VisitOptions, ReloadOptions } from './types.ts'
+export type {
+  PageInfo,
+  VisitOptions,
+  ReloadOptions,
+  PrefetchOption,
+  PrefetchMode,
+  PrefetchOptions,
+} from './types.ts'
 
 export {
   putConfig,

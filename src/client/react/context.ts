@@ -5,7 +5,7 @@
 import { createContext, useContext, type ComponentType } from 'react'
 
 import type { ModalEntry } from '../core/types.ts'
-import type { PageInfo, ReloadOptions, VisitOptions } from './types.ts'
+import type { PageInfo, PrefetchOptions, ReloadOptions, VisitOptions } from './types.ts'
 
 export interface ModalStackContextValue {
   stack: ModalEntry[]
@@ -16,6 +16,8 @@ export interface ModalStackContextValue {
   visitModal: (href: string, options?: VisitOptions) => Promise<ModalEntry>
   close: (id: string) => void
   reload: (id: string, options?: ReloadOptions) => Promise<void>
+  /** Pre-fetch a modal into the cache so the next open is instant. */
+  prefetch: (href: string, options?: PrefetchOptions) => Promise<void>
   /** Feed the current Inertia page into the provider (called by ModalRoot). */
   syncPage: (page: PageInfo) => void
 }

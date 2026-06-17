@@ -39,3 +39,14 @@ export interface ReloadOptions {
   onError?: (error: unknown) => void
   onFinish?: () => void
 }
+
+export type PrefetchMode = 'hover' | 'click' | 'mount'
+export type PrefetchOption = boolean | PrefetchMode | PrefetchMode[]
+
+export interface PrefetchOptions {
+  method?: HttpMethod
+  data?: Record<string, unknown>
+  headers?: Record<string, string>
+  /** Cache lifetime in ms (default 30000). */
+  cacheFor?: number
+}

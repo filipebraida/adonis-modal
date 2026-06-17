@@ -81,6 +81,43 @@ export function ModalStackProvider({
     [stackInstance]
   )
 
+  /**
+   * Prefetch cache: href+method+data -> { payload, expires }.
+   */
+  const cacheRef = useRef<Map<string, { payload: ModalResponsePayload; expires: number }>>(
+    new Map()
+  )
+  const cacheKey = (href: string, method?: string, data?: Record<string, unknown>) =>
+    `${method ?? 'get'}:${href}:${data ? JSON.stringify(data) : ''}`
+
+  const prefetch = useCallback(
+    async (
+      href: string,
+      options: { method?: any; data?: any; headers?: any; cacheFor?: number } = {}
+    ) => {
+      if (href.startsWith('#')) {
+        return
+      }
+      const key = cacheKey(href, options.method, options.data)
+      const cached = cacheRef.current.get(key)
+      if (cached && cached.expires > Date.now()) {
+        return
+      }
+      const current = pageRef.current
+      const payload = await requestModal(client, {
+        href,
+        method: options.method,
+        data: options.data,
+        headers: options.headers,
+        currentComponent: current.component,
+        version: current.version,
+        redirectUrl: current.url,
+      })
+      cacheRef.current.set(key, { payload, expires: Date.now() + (options.cacheFor ?? 30000) })
+    },
+    [client]
+  )
+
   const visit = useCallback(
     async (href: string, options: VisitOptions = {}): Promise<ModalEntry> => {
       /**
@@ -110,15 +147,21 @@ export function ModalStackProvider({
       options.onStart?.()
       try {
         const current = pageRef.current
-        const payload = await requestModal(client, {
-          href,
-          method: options.method,
-          data: options.data,
-          headers: options.headers,
-          currentComponent: current.component,
-          version: current.version,
-          redirectUrl: current.url,
-        })
+        // Serve from the prefetch cache when available (and unexpired).
+        const key = cacheKey(href, options.method, options.data)
+        const cached = cacheRef.current.get(key)
+        const payload =
+          cached && cached.expires > Date.now()
+            ? cached.payload
+            : await requestModal(client, {
+                href,
+                method: options.method,
+                data: options.data,
+                headers: options.headers,
+                currentComponent: current.component,
+                version: current.version,
+                redirectUrl: current.url,
+              })
 
         const entry = stackInstance.push(payload, {
           url: href,
@@ -214,6 +257,7 @@ export function ModalStackProvider({
     visitModal: visit,
     close,
     reload,
+    prefetch,
     syncPage,
   }
 

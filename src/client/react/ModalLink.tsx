@@ -2,10 +2,20 @@
  * adonis-modal — React client
  */
 
-import { useCallback, useState, type ElementType, type MouseEvent, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ElementType,
+  type MouseEvent,
+  type ReactNode,
+} from 'react'
 
 import type { HttpMethod, ModalOptions } from '../core/types.ts'
 import { useModalStack } from './context.ts'
+import type { PrefetchMode, PrefetchOption } from './types.ts'
 
 export interface ModalLinkProps {
   href: string
@@ -17,6 +27,10 @@ export interface ModalLinkProps {
   config?: ModalOptions
   /** Open as a slideover instead of a centered modal. */
   slideover?: boolean
+  /** Prefetch the modal on hover/click/mount (true = hover). */
+  prefetch?: PrefetchOption
+  /** Prefetch cache lifetime in ms (default 30000). */
+  cacheFor?: number
   onStart?: () => void
   onSuccess?: () => void
   onError?: (error: unknown) => void
@@ -41,6 +55,8 @@ export function ModalLink({
   as: Component = 'a',
   config,
   slideover,
+  prefetch = false,
+  cacheFor = 30000,
   onStart,
   onSuccess,
   onError,
@@ -49,8 +65,32 @@ export function ModalLink({
   children,
   ...rest
 }: ModalLinkProps) {
-  const { visit } = useModalStack()
+  const { visit, prefetch: prefetchModal } = useModalStack()
   const [loading, setLoading] = useState(false)
+  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const prefetchModes = useMemo<PrefetchMode[]>(() => {
+    if (prefetch === true) return ['hover']
+    if (prefetch === false) return []
+    return Array.isArray(prefetch) ? prefetch : [prefetch]
+  }, [prefetch])
+
+  const doPrefetch = useCallback(() => {
+    prefetchModal(href, { method, data, headers, cacheFor }).catch(() => {})
+  }, [prefetchModal, href, method, data, headers, cacheFor])
+
+  useEffect(() => {
+    if (prefetchModes.includes('mount')) {
+      doPrefetch()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout.current) clearTimeout(hoverTimeout.current)
+    }
+  }, [])
 
   const domProps: Record<string, unknown> = {}
   const listeners: Record<string, (...args: unknown[]) => void> = {}
@@ -92,8 +132,31 @@ export function ModalLink({
     [href, method, data, headers, config, slideover, loading, visit]
   )
 
+  const handleMouseEnter = useCallback(() => {
+    if (!prefetchModes.includes('hover')) return
+    hoverTimeout.current = setTimeout(doPrefetch, 75)
+  }, [prefetchModes, doPrefetch])
+
+  const handleMouseLeave = useCallback(() => {
+    if (hoverTimeout.current) {
+      clearTimeout(hoverTimeout.current)
+      hoverTimeout.current = null
+    }
+  }, [])
+
+  const handleMouseDown = useCallback(() => {
+    if (prefetchModes.includes('click')) doPrefetch()
+  }, [prefetchModes, doPrefetch])
+
   return (
-    <Component {...domProps} href={href} onClick={handle}>
+    <Component
+      {...domProps}
+      href={href}
+      onClick={handle}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
+    >
       {typeof children === 'function' ? children({ loading }) : children}
     </Component>
   )

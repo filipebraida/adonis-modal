@@ -409,3 +409,35 @@ test.group('react | headless', (group) => {
     await waitFor(() => assert.isNull(screen.queryByText('custom: Grace')))
   })
 })
+
+test.group('react | prefetch', (group) => {
+  group.each.teardown(() => cleanup())
+
+  test('prefetch on mount serves the open from cache (single request)', async ({ assert }) => {
+    let calls = 0
+    const client: HttpClientLike = {
+      request: () => {
+        calls += 1
+        return Promise.resolve({
+          data: { props: { modal: { component: 'm', props: { name: 'Pre' }, key: 'k1' } } },
+        })
+      },
+    }
+
+    renderApp({
+      client,
+      ui: (
+        <ModalLink href="/m" prefetch="mount">
+          Open
+        </ModalLink>
+      ),
+    })
+
+    // Wait for the mount prefetch to populate the cache.
+    await waitFor(() => assert.equal(calls, 1))
+
+    fireEvent.click(screen.getByText('Open'))
+    assert.isNotNull(await screen.findByText('User: Pre'))
+    assert.equal(calls, 1) // open reused the prefetched response
+  })
+})
