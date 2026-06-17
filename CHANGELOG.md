@@ -7,6 +7,14 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 First usable release. React and Vue 3 support.
 
+### beta.4
+
+- Internal type hygiene (no API/behavior change): access `ctx.containerResolver`
+  and `ctx.session` with their real types (the latter via the
+  `@adonisjs/session/session_middleware` reference, as `@adonisjs/inertia` does)
+  instead of `as any`; remove other lazy `as any` / `as never` casts. The server
+  no longer uses `as any`.
+
 ### beta.3
 
 - **Breaking:** the backdrop is now a required 3rd argument of `inertia.modal()`,
