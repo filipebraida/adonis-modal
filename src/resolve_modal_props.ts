@@ -1,5 +1,5 @@
 /*
- * adonis-modal
+ * adonis-inertia-modal
  *
  * Resolves the adapter's prop wrappers (defer/optional/always/merge) *inside*
  * `modal.props`. The AdonisJS Inertia adapter only processes these symbol-tagged

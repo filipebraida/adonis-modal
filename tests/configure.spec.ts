@@ -27,6 +27,6 @@ test.group('configure', () => {
 
     await configure(command as never)
 
-    assert.include(providers, 'adonis-modal/modal_provider')
+    assert.include(providers, 'adonis-inertia-modal/modal_provider')
   })
 })

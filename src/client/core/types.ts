@@ -1,5 +1,5 @@
 /*
- * adonis-modal — framework-agnostic core
+ * adonis-inertia-modal — framework-agnostic core
  */
 
 import type { EventEmitter } from './event_emitter.ts'

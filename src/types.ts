@@ -1,5 +1,5 @@
 /*
- * adonis-modal
+ * adonis-inertia-modal
  *
  * Backend-driven modals for Inertia.js on AdonisJS.
  */

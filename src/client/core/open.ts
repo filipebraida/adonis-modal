@@ -1,5 +1,5 @@
 /*
- * adonis-modal — framework-agnostic core
+ * adonis-inertia-modal — framework-agnostic core
  *
  * Orchestrates the network side of opening/reloading a modal: issue the
  * controlled partial request and extract the modal payload. The HTTP client is
@@ -32,7 +32,7 @@ export async function requestModal(
 
   if (!payload) {
     throw new Error(
-      'adonis-modal: the response did not contain a modal payload. This usually means the ' +
+      'adonis-inertia-modal: the response did not contain a modal payload. This usually means the ' +
         'server returned a redirect (e.g. an expired session) or the route does not return ' +
         'inertia.modal(...).'
     )

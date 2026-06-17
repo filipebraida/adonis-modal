@@ -18,21 +18,21 @@ export async function configure(command: Configure) {
    * Register the provider that extends `ctx.inertia` with `modal()`.
    */
   await codemods.updateRcFile((rcFile) => {
-    rcFile.addProvider('adonis-modal/modal_provider')
+    rcFile.addProvider('adonis-inertia-modal/modal_provider')
   })
 
   /**
    * Manual frontend wiring can't be safely codemodded, so we print the steps.
    */
-  command.logger.info('adonis-modal is configured. Finish the frontend wiring:')
+  command.logger.info('adonis-inertia-modal is configured. Finish the frontend wiring:')
   command.logger.log('')
   command.logger.log('  1. Wrap your app with <ModalStackProvider> in your Inertia entrypoint:')
-  command.logger.log("       import { ModalStackProvider } from 'adonis-modal/react'")
+  command.logger.log("       import { ModalStackProvider } from 'adonis-inertia-modal/react'")
   command.logger.log('       // <ModalStackProvider><App {...props} /></ModalStackProvider>')
   command.logger.log('')
   command.logger.log('  2. Render <ModalRoot /> once inside your app (e.g. in a layout):')
-  command.logger.log("       import { ModalRoot } from 'adonis-modal/react'")
+  command.logger.log("       import { ModalRoot } from 'adonis-inertia-modal/react'")
   command.logger.log('')
   command.logger.log('  3. Import the styles once (e.g. in your app entrypoint):')
-  command.logger.log("       import 'adonis-modal/styles.css'")
+  command.logger.log("       import 'adonis-inertia-modal/styles.css'")
 }

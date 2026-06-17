@@ -1,11 +1,11 @@
 /*
- * adonis-modal
+ * adonis-inertia-modal
  *
  * Backend-driven modals for Inertia.js on AdonisJS.
  */
 
 /**
- * Headers used by adonis-modal on top of the standard Inertia protocol.
+ * Headers used by adonis-inertia-modal on top of the standard Inertia protocol.
  *
  * The modal "rides along" as a shared `modal` prop on a regular Inertia page,
  * so we reuse Inertia's own headers (`x-inertia`, `x-inertia-partial-*`) and

@@ -1,7 +1,7 @@
 {
-  "name": "adonis-modal",
+  "name": "adonis-inertia-modal",
   "description": "Backend-driven modals for Inertia.js on AdonisJS",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.0",
   "engines": {
     "node": ">=24.0.0"
   },

@@ -1,5 +1,5 @@
 /*
- * adonis-modal — framework-agnostic core
+ * adonis-inertia-modal — framework-agnostic core
  */
 
 export type EventCallback = (...args: unknown[]) => void

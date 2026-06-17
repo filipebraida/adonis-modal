@@ -1,7 +1,7 @@
 /*
- * adonis-modal — framework-agnostic core
+ * adonis-inertia-modal — framework-agnostic core
  *
- * Config system ported from inertiaui/modal (config.ts), adapted for adonis-modal.
+ * Config system ported from inertiaui/modal (config.ts), adapted for adonis-inertia-modal.
  */
 
 export interface ModalTypeConfig {

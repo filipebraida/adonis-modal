@@ -32,7 +32,7 @@ export function setupViewMacroMock() {
 
 /**
  * Boot a real AdonisJS app for integration tests, registering the core, edge,
- * vite, inertia and adonis-modal providers.
+ * vite, inertia and adonis-inertia-modal providers.
  */
 export async function setupApp(providers: ProviderNode[] = []) {
   const ignitor = new IgnitorFactory()

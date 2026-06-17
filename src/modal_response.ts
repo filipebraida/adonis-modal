@@ -1,5 +1,5 @@
 /*
- * adonis-modal
+ * adonis-inertia-modal
  *
  * Backend-driven modals for Inertia.js on AdonisJS.
  */
@@ -171,7 +171,7 @@ export class ModalResponse {
 
     if (!matched) {
       throw new Error(
-        `adonis-modal: could not resolve a GET route for the backdrop URL "${baseUrl}". ` +
+        `adonis-inertia-modal: could not resolve a GET route for the backdrop URL "${baseUrl}". ` +
           `Make sure the route passed to baseRoute()/baseUrl() exists.`
       )
     }
@@ -313,7 +313,7 @@ export class ModalResponse {
   #resolveBaseUrl(): string {
     if (!this.#baseUrl) {
       throw new Error(
-        'adonis-modal: a backdrop URL is required. Call baseRoute() or baseUrl() on the modal response.'
+        'adonis-inertia-modal: a backdrop URL is required. Call baseRoute() or baseUrl() on the modal response.'
       )
     }
     return this.#baseUrl
@@ -322,7 +322,7 @@ export class ModalResponse {
   #requireRouter(): RouterLike {
     if (!this.router) {
       throw new Error(
-        'adonis-modal: the router is not available. This usually means the ModalResponse was ' +
+        'adonis-inertia-modal: the router is not available. This usually means the ModalResponse was ' +
           'constructed without one (the provider injects it automatically in a running app).'
       )
     }

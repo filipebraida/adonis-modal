@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
 /**
- * Example of returning a modal from a controller with adonis-modal.
+ * Example of returning a modal from a controller with adonis-inertia-modal.
  *
  * Visiting the route directly renders `{{ baseRoute }}` as the backdrop with
  * this modal on top; opening it via a <ModalLink> keeps the current page.

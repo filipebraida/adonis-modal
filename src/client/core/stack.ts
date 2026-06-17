@@ -1,5 +1,5 @@
 /*
- * adonis-modal — framework-agnostic core
+ * adonis-inertia-modal — framework-agnostic core
  *
  * The modal stack. A small observable store (push/close/remove) designed to be
  * consumed by React's useSyncExternalStore (and a Vue equivalent later). Each

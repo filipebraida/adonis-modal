@@ -1,5 +1,5 @@
 /*
- * adonis-modal — React client
+ * adonis-inertia-modal — React client
  */
 
 import type { ReactNode } from 'react'

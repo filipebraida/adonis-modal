@@ -1,5 +1,5 @@
 /*
- * adonis-modal — framework-agnostic core
+ * adonis-inertia-modal — framework-agnostic core
  *
  * Builds the raw HTTP request used to open/reload a modal. We bypass Inertia's
  * page-swap and issue a controlled partial request (only the `modal` prop) so

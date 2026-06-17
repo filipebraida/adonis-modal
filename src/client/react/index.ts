@@ -1,5 +1,5 @@
 /*
- * adonis-modal — React client entrypoint
+ * adonis-inertia-modal — React client entrypoint
  */
 
 export { ModalStackProvider, type ModalStackProviderProps } from './ModalStackProvider.tsx'

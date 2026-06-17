@@ -19,7 +19,7 @@ First usable release. React support; Vue planned.
   dot-notation **inside** `modal.props`; deferred props are listed for the client
   and computed on a sparse reload.
 
-### React client (`adonis-modal/react`)
+### React client (`adonis-inertia-modal/react`)
 
 - `ModalStackProvider`, `ModalRoot`, `ModalLink`, `Modal`, `useModal`,
   `useModalStack` (`visit`/`visitModal`).
@@ -35,5 +35,5 @@ First usable release. React support; Vue planned.
 
 ### Tooling
 
-- `node ace configure adonis-modal` registers the provider and prints wiring steps.
-- Ships default styles via `import 'adonis-modal/styles.css'`.
+- `node ace configure adonis-inertia-modal` registers the provider and prints wiring steps.
+- Ships default styles via `import 'adonis-inertia-modal/styles.css'`.

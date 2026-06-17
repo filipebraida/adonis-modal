@@ -1,4 +1,4 @@
-# adonis-modal
+# adonis-inertia-modal
 
 Backend-driven modals for [Inertia.js](https://inertiajs.com) on
 [AdonisJS](https://adonisjs.com). Open any route in a modal or slideover —
@@ -40,8 +40,8 @@ The modal is delivered as a shared `modal` prop on a normal Inertia page, so:
 ## Install
 
 ```sh
-npm i adonis-modal
-node ace configure adonis-modal
+npm i adonis-inertia-modal
+node ace configure adonis-inertia-modal
 ```
 
 `configure` registers the provider and prints the wiring steps below.
@@ -50,8 +50,8 @@ node ace configure adonis-modal
 
 ```tsx
 // inertia/app.tsx
-import 'adonis-modal/styles.css'
-import { ModalStackProvider } from 'adonis-modal/react'
+import 'adonis-inertia-modal/styles.css'
+import { ModalStackProvider } from 'adonis-inertia-modal/react'
 
 createInertiaApp({
   resolve: (name) => resolvePageComponent(/* ... */),
@@ -69,7 +69,7 @@ Render `<ModalRoot />` once **inside** the app (e.g. in a layout or persistent
 layout), where Inertia's `usePage()` is available:
 
 ```tsx
-import { ModalRoot } from 'adonis-modal/react'
+import { ModalRoot } from 'adonis-inertia-modal/react'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -129,7 +129,7 @@ Props: `href`, `method`, `data`, `headers`, `as`, `config`, `slideover`,
 The page that should render as a modal wraps itself in `<Modal>`:
 
 ```tsx
-import { Modal, useModal } from 'adonis-modal/react'
+import { Modal, useModal } from 'adonis-inertia-modal/react'
 
 export default function ShowUser({ user }) {
   return (
@@ -159,7 +159,7 @@ const modal = useModal()!
 ### Deferred / lazy props
 
 ```tsx
-import { Deferred, WhenVisible } from 'adonis-modal/react'
+import { Deferred, WhenVisible } from 'adonis-inertia-modal/react'
 
 <Deferred data="lines" fallback={<p>Loading…</p>}>
   <Lines />
@@ -186,7 +186,7 @@ import { Deferred, WhenVisible } from 'adonis-modal/react'
 ### Programmatic & local modals
 
 ```tsx
-import { useModalStack, Modal } from 'adonis-modal/react'
+import { useModalStack, Modal } from 'adonis-inertia-modal/react'
 
 const { visitModal } = useModalStack()
 visitModal('/users/create', { slideover: true })
@@ -199,7 +199,7 @@ visitModal('#confirm', { props: { message: 'Sure?' } })
 ### Headless mode
 
 ```tsx
-import { HeadlessModal } from 'adonis-modal/react'
+import { HeadlessModal } from 'adonis-inertia-modal/react'
 
 <HeadlessModal>{(modal) => /* your own dialog UI */}</HeadlessModal>
 ```
@@ -207,7 +207,7 @@ import { HeadlessModal } from 'adonis-modal/react'
 ### Configuration
 
 ```ts
-import { putConfig } from 'adonis-modal/react'
+import { putConfig } from 'adonis-inertia-modal/react'
 
 putConfig({ modal: { maxWidth: 'lg', closeButton: false } })
 putConfig('slideover.position', 'left')

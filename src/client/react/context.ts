@@ -1,5 +1,5 @@
 /*
- * adonis-modal — React client
+ * adonis-inertia-modal — React client
  */
 
 import { createContext, useContext, type ComponentType } from 'react'
@@ -27,7 +27,9 @@ export const ModalStackContext = createContext<ModalStackContextValue | null>(nu
 export function useModalStack(): ModalStackContextValue {
   const context = useContext(ModalStackContext)
   if (!context) {
-    throw new Error('adonis-modal: useModalStack() must be used within <ModalStackProvider>.')
+    throw new Error(
+      'adonis-inertia-modal: useModalStack() must be used within <ModalStackProvider>.'
+    )
   }
   return context
 }

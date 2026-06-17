@@ -1,5 +1,5 @@
 /*
- * adonis-modal — framework-agnostic core
+ * adonis-inertia-modal — framework-agnostic core
  *
  * Default, dependency-free HTTP client (uses the browser fetch API). Apps that
  * need Inertia's axios interceptors / XSRF handling can inject their own client.
