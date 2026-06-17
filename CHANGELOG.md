@@ -47,6 +47,24 @@ First usable release. React and Vue 3 support.
 - Same native `<dialog>` behavior (top-layer, `::backdrop`, Esc / backdrop-click
   close, scroll-lock) and deep-link / nested / slideover / prefetch support.
 
+### Transitions
+
+- Two-phase close on both clients: a modal marked closing plays its leave
+  transition, then the native `dialog.close()` runs and the entry is removed
+  (`onClose` → leave → `onAfterLeave`). Default enter (`@starting-style`) and
+  leave (`[data-leaving]`) fade/slide ship in `styles.css`, with a
+  `prefers-reduced-motion` opt-out; removal is immediate when no transition is set.
+
+### Hardening (alpha.4)
+
+- Ref-counted body scroll-lock so stacked modals can't leave the page locked.
+- Open-redirect guard: the close-redirect target is reduced to a same-origin path.
+- `ModalResponse.render()` is memoized and restores the request's routing state
+  after dispatching the backdrop; `with()` no longer mutates the caller's props.
+- Bounded prefetch cache (TTL + size cap); `EventEmitter` dispatch is mutation-safe.
+- Close button honors per-modal and global (`putConfig`) config; lazy props stay
+  lazy on `except` reloads. Browser-verified in Chromium.
+
 ### Tooling
 
 - `node ace configure adonis-inertia-modal` registers the provider and prints wiring steps.
