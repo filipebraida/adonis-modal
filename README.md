@@ -150,11 +150,31 @@ onTopOfStack, close, reload, emit, on }`.
 
 ### Forms & validation
 
+Use Inertia's `useForm` inside the modal. On a validation error the modal stays
+open with the errors; close it yourself on success:
+
 ```tsx
-const modal = useModal()!
-// modal.errors.email is populated after a failed submit — the modal stays open.
-// modal.reload({ only: ['stats'] }) re-fetches specific (deferred) props.
+import { useForm } from '@inertiajs/react'
+import { Modal } from 'adonis-inertia-modal/react'
+
+export default function CreateNote() {
+  const form = useForm({ title: '', body: '' })
+  return (
+    <Modal>
+      {({ close }) => (
+        <form onSubmit={(e) => { e.preventDefault(); form.post('/notes', { onSuccess: () => close() }) }}>
+          <input value={form.data.title} onChange={(e) => form.setData('title', e.target.value)} />
+          {form.errors.title && <span>{form.errors.title}</span>}
+          <button disabled={form.processing}>Save</button>
+        </form>
+      )}
+    </Modal>
+  )
+}
 ```
+
+`useModal().errors` also exposes the shared errors, and `useModal().reload({ only })`
+re-fetches specific (deferred) props.
 
 ### Deferred / lazy props
 
