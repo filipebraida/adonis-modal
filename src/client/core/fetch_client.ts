@@ -37,7 +37,13 @@ export function createFetchClient(): HttpClientLike {
       } catch {
         // leave as text; parseModalPayload will reject it
       }
-      return { data: parsed }
+      return {
+        data: parsed,
+        status: response.status,
+        headers: Object.fromEntries(response.headers.entries()),
+        redirected: response.redirected,
+        url: response.url,
+      }
     },
   }
 }

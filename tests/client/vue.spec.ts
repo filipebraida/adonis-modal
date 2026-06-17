@@ -813,4 +813,27 @@ test.group('vue | error handling', (group) => {
       console.error = original
     }
   })
+
+  test('a followed redirect (e.g. auth) navigates instead of logging', async ({ assert }) => {
+    let navigatedTo: string | null = null
+    const redirectClient: HttpClientLike = {
+      request: () => Promise.resolve({ data: { props: {} }, redirected: true, url: '/login' }),
+    }
+    const original = console.error
+    const logs: string[] = []
+    console.error = (...args: unknown[]) => logs.push(String(args[0]))
+    try {
+      const { wrapper } = mountApp({
+        client: redirectClient,
+        navigate: (url) => (navigatedTo = url),
+        ui: () => h(ModalLink, { href: '/x' }, { default: () => 'Open' }),
+      })
+      await clickText(wrapper, 'Open')
+      await tick()
+      assert.equal(navigatedTo, '/login')
+      assert.isFalse(logs.some((l) => l.includes('Failed to open modal')))
+    } finally {
+      console.error = original
+    }
+  })
 })

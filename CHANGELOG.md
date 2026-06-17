@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 First usable release. React and Vue 3 support.
 
+### Unreleased (since alpha.6)
+
+- Graceful handling of non-modal responses when opening: an Inertia version
+  mismatch (`409` + `X-Inertia-Location`) triggers a full reload, and a followed
+  redirect (e.g. an expired session bounced to `/login`) navigates there — instead
+  of just logging. The default HTTP client now exposes status/headers/redirect.
+
 ### alpha.6
 
 - A failed modal open (non-modal response: 404, auth redirect, …) now logs to the

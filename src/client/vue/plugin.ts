@@ -7,7 +7,7 @@ import { router as inertiaRouter } from '@inertiajs/vue3'
 
 import { createFetchClient } from '../core/fetch_client.ts'
 import { ModalHistory } from '../core/history.ts'
-import { requestModal, type HttpClientLike } from '../core/open.ts'
+import { ModalLocationError, requestModal, type HttpClientLike } from '../core/open.ts'
 import { PrefetchCache } from '../core/prefetch_cache.ts'
 import { generateId, ModalStack } from '../core/stack.ts'
 import type { ModalEntry, ModalResponsePayload } from '../core/types.ts'
@@ -121,8 +121,17 @@ export function createModalContext(options: ModalPluginOptions = {}): ModalConte
       opts.onSuccess?.()
       return entry
     } catch (error) {
-      // Default behavior: log so a failed open (404, auth redirect, non-modal
-      // response) isn't silent. Pass onError to override (e.g. a toast).
+      // Redirect / version mismatch: navigate instead of treating it as an error.
+      if (error instanceof ModalLocationError) {
+        if (error.hard && typeof window !== 'undefined') {
+          window.location.href = error.location
+        } else {
+          navigate(error.location)
+        }
+        throw error
+      }
+      // Default behavior: log so a failed open (404, non-modal response) isn't
+      // silent. Pass onError to override (e.g. a toast).
       if (opts.onError) {
         opts.onError(error)
       } else {

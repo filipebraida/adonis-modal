@@ -1,6 +1,11 @@
 import { test } from '@japa/runner'
 
-import { requestModal, type HttpClientLike } from '../../src/client/core/open.ts'
+import {
+  ModalLocationError,
+  requestModal,
+  type HttpClientLike,
+  type HttpResponseLike,
+} from '../../src/client/core/open.ts'
 
 function fakeClient(data: unknown, capture?: (config: any) => void): HttpClientLike {
   return {
@@ -9,6 +14,10 @@ function fakeClient(data: unknown, capture?: (config: any) => void): HttpClientL
       return Promise.resolve({ data })
     },
   }
+}
+
+function fakeClientResponse(response: HttpResponseLike): HttpClientLike {
+  return { request: () => Promise.resolve(response) }
 }
 
 test.group('core | requestModal', () => {
@@ -33,5 +42,41 @@ test.group('core | requestModal', () => {
       () => requestModal(client, { href: '/x', currentComponent: 'home' }),
       /did not contain a modal payload/
     )
+  })
+
+  test('throws a hard ModalLocationError on a version mismatch (X-Inertia-Location)', async ({
+    assert,
+  }) => {
+    const client = fakeClientResponse({
+      data: {},
+      status: 409,
+      headers: { 'x-inertia-location': '/dashboard' },
+    })
+
+    try {
+      await requestModal(client, { href: '/x', currentComponent: 'home' })
+      assert.fail('should have thrown')
+    } catch (error) {
+      assert.instanceOf(error, ModalLocationError)
+      assert.equal((error as ModalLocationError).location, '/dashboard')
+      assert.isTrue((error as ModalLocationError).hard)
+    }
+  })
+
+  test('throws a soft ModalLocationError on a followed redirect', async ({ assert }) => {
+    const client = fakeClientResponse({
+      data: { props: {} },
+      redirected: true,
+      url: 'https://app.test/login',
+    })
+
+    try {
+      await requestModal(client, { href: '/x', currentComponent: 'home' })
+      assert.fail('should have thrown')
+    } catch (error) {
+      assert.instanceOf(error, ModalLocationError)
+      assert.equal((error as ModalLocationError).location, 'https://app.test/login')
+      assert.isFalse((error as ModalLocationError).hard)
+    }
   })
 })
