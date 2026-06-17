@@ -4,8 +4,7 @@
 
 import { useEffect, useRef, type ReactNode } from 'react'
 
-import { useModalStack } from './context.ts'
-import useModal, { type UseModalReturn } from './use_modal.ts'
+import { useResolvedModal, type UseModalReturn } from './use_modal.ts'
 
 export interface ModalProps {
   children: ReactNode | ((modal: UseModalReturn) => ReactNode)
@@ -146,40 +145,14 @@ function ModalShell({
  * when opened via a `#name` link / visitModal('#name').
  */
 export function Modal({ children, name, onClose, closeButton }: ModalProps) {
-  const stackContext = useModalStack()
-  const serverModal = useModal()
+  const modal = useResolvedModal(name)
 
-  if (name) {
-    const entry = stackContext.stack.find((item) => item.name === name && item.local && item.isOpen)
-    if (!entry) {
-      return null
-    }
-    const localModal: UseModalReturn = {
-      id: entry.id,
-      props: entry.props,
-      errors: (stackContext.page.props?.errors as Record<string, string>) ?? {},
-      config: entry.config,
-      isOpen: entry.isOpen,
-      index: entry.index,
-      onTopOfStack: entry.onTopOfStack,
-      close: () => stackContext.close(entry.id),
-      reload: async () => {},
-      emit: (event, ...args) => entry.emitter.emit(event, ...args),
-      on: (event, callback) => entry.emitter.on(event, callback),
-    }
-    return (
-      <ModalShell modal={localModal} onClose={onClose} closeButton={closeButton}>
-        {children}
-      </ModalShell>
-    )
-  }
-
-  if (!serverModal || !serverModal.isOpen) {
+  if (!modal) {
     return null
   }
 
   return (
-    <ModalShell modal={serverModal} onClose={onClose} closeButton={closeButton}>
+    <ModalShell modal={modal} onClose={onClose} closeButton={closeButton}>
       {children}
     </ModalShell>
   )

@@ -6,6 +6,7 @@ import { ModalRoot } from '../../src/client/react/ModalRoot.tsx'
 import { ModalLink } from '../../src/client/react/ModalLink.tsx'
 import { Modal } from '../../src/client/react/Modal.tsx'
 import { Deferred } from '../../src/client/react/Deferred.tsx'
+import { HeadlessModal } from '../../src/client/react/HeadlessModal.tsx'
 import { useModalStack } from '../../src/client/react/context.ts'
 import useModal from '../../src/client/react/use_modal.ts'
 import type { HttpClientLike } from '../../src/client/core/open.ts'
@@ -371,5 +372,40 @@ test.group('react | deferred props', (group) => {
     fireEvent.click(screen.getByText('Open'))
     // The deferred prop is absent on open, then loaded via the sparse reload.
     assert.isNotNull(await screen.findByText('visits: 5'))
+  })
+})
+
+test.group('react | headless', (group) => {
+  group.each.teardown(() => cleanup())
+
+  test('<HeadlessModal> renders custom UI with the modal instance and closes', async ({
+    assert,
+  }) => {
+    function Custom() {
+      return (
+        <HeadlessModal>
+          {(modal) => (
+            <div data-custom>
+              <span>custom: {String(modal.props.name)}</span>
+              <button type="button" onClick={modal.close}>
+                x
+              </button>
+            </div>
+          )}
+        </HeadlessModal>
+      )
+    }
+
+    renderApp({
+      component: Custom,
+      client: clientReturning({ component: 'm', props: { name: 'Grace' }, key: 'k1' }),
+      ui: <ModalLink href="/m">Open</ModalLink>,
+    })
+
+    fireEvent.click(screen.getByText('Open'))
+    assert.isNotNull(await screen.findByText('custom: Grace'))
+
+    fireEvent.click(screen.getByText('x'))
+    await waitFor(() => assert.isNull(screen.queryByText('custom: Grace')))
   })
 })
