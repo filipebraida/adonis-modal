@@ -32,6 +32,8 @@ export interface ModalEntry {
   name?: string
   component: string
   props: Record<string, unknown>
+  /** The URL this modal was requested from (used to reload its props). */
+  url?: string
   baseUrl?: string
   redirectUrl?: string
   config: ModalOptions
@@ -45,6 +47,7 @@ export interface ModalEntry {
 
 export interface PushOptions {
   name?: string
+  url?: string
   config?: ModalOptions
   onClose?: () => void
   onAfterLeave?: () => void

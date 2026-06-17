@@ -15,7 +15,8 @@
   "exports": {
     ".": "./build/index.js",
     "./types": "./build/src/types.js",
-    "./modal_provider": "./build/providers/modal_provider.js"
+    "./modal_provider": "./build/providers/modal_provider.js",
+    "./react": "./build/src/client/react/index.js"
   },
   "scripts": {
     "copy:templates": "copyfiles \"stubs/**/*.stub\" build",
@@ -50,17 +51,26 @@
     "@adonisjs/prettier-config": "^1.4.5",
     "@adonisjs/tsconfig": "^2.0.0",
     "@adonisjs/vite": "^5.1.0",
+    "@happy-dom/global-registrator": "^16.8.1",
+    "@inertiajs/core": "^2.3.26",
+    "@inertiajs/react": "^2.3.26",
     "@japa/assert": "^4.2.0",
     "@japa/runner": "^5.3.0",
     "@poppinss/ts-exec": "^1.4.4",
     "@release-it/conventional-changelog": "^10.0.5",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^25.3.5",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "c8": "^11.0.0",
     "copyfiles": "^2.4.1",
     "cross-env": "^10.1.0",
     "edge.js": "^6.2.1",
     "eslint": "^10.0.3",
     "prettier": "^3.8.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "release-it": "^19.2.4",
     "tsdown": "^0.21.0",
     "typescript": "^5.9.3"
@@ -68,10 +78,22 @@
   "peerDependencies": {
     "@adonisjs/assembler": "^8.0.0",
     "@adonisjs/core": "^7.0.0",
-    "@adonisjs/inertia": "^4.0.0 || ^5.0.0-next.0"
+    "@adonisjs/inertia": "^4.0.0 || ^5.0.0-next.0",
+    "@inertiajs/react": "^2.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "peerDependenciesMeta": {
     "@adonisjs/assembler": {
+      "optional": true
+    },
+    "@inertiajs/react": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
       "optional": true
     }
   },
@@ -84,7 +106,8 @@
       "./index.ts",
       "./configure.ts",
       "./src/types.ts",
-      "./providers/modal_provider.ts"
+      "./providers/modal_provider.ts",
+      "./src/client/react/index.ts"
     ],
     "outDir": "./build",
     "clean": true,

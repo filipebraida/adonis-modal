@@ -46,6 +46,7 @@ export class ModalStack {
       name: options.name,
       component: payload.component,
       props: { ...payload.props },
+      url: options.url,
       baseUrl: payload.baseUrl,
       redirectUrl: payload.redirectUrl,
       config: options.config ?? {},
