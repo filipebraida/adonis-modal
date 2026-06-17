@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 First usable release. React and Vue 3 support.
 
+### Unreleased (since beta.1)
+
+- SSR-safety is now validated by an automated smoke (`npm run test:ssr`, also in
+  CI): both clients render via the real server renderers in a no-DOM Node
+  environment without touching `window`/`document` (backdrop renders; the modal
+  mounts after hydration). Confirms the earlier by-inspection claim.
+
 ### beta.1
 
 First beta. Feature-complete vs. the alpha line; React validated end-to-end in a
