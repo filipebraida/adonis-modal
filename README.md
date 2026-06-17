@@ -5,8 +5,8 @@ Backend-driven modals for [Inertia.js](https://inertiajs.com) on
 deep-linkable, validation-aware, with the backdrop page preserved — without
 fighting client-side state.
 
-> Status: early development (React and Vue 3 supported). Validated end-to-end
-> in a real AdonisJS 7 + React 19 app.
+> Status: beta. React and Vue 3 supported, both validated end-to-end in a real
+> AdonisJS 7 + Inertia app. SSR-safe (deep-linked modals mount after hydration).
 
 ## Why
 

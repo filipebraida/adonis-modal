@@ -7,7 +7,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 First usable release. React and Vue 3 support.
 
-### Unreleased (since alpha.6)
+### beta.1
+
+First beta. Feature-complete vs. the alpha line; React validated end-to-end in a
+real AdonisJS + Inertia app and Vue validated the same way (open via link, deep-link
+by URL with server props, history, focus, scroll-lock). Known limitation: deep-linked
+modals render after client hydration, not in the initial SSR HTML.
 
 - ModalRenderer unwraps ES module namespaces from the resolver (`{ default: Component }`),
   so custom `resolveComponent` using `resolvePageComponent` works (found validating the
