@@ -8,6 +8,8 @@ import type { ReloadOptions } from './types.ts'
 export interface UseModalReturn {
   id: string
   props: Record<string, unknown>
+  /** Validation errors shared by the server (Inertia `errors` prop). */
+  errors: Record<string, string>
   isOpen: boolean
   index: number
   onTopOfStack: boolean
@@ -22,7 +24,7 @@ export interface UseModalReturn {
  * modal. Returns null when not inside a modal.
  */
 export default function useModal(): UseModalReturn | null {
-  const { stack, close, reload } = useModalStack()
+  const { stack, close, reload, page } = useModalStack()
   const index = useModalIndex()
   const entry = stack[index]
 
@@ -33,6 +35,7 @@ export default function useModal(): UseModalReturn | null {
   return {
     id: entry.id,
     props: entry.props,
+    errors: (page.props?.errors as Record<string, string>) ?? {},
     isOpen: entry.isOpen,
     index: entry.index,
     onTopOfStack: entry.onTopOfStack,

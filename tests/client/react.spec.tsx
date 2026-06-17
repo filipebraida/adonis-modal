@@ -5,6 +5,7 @@ import { ModalStackProvider } from '../../src/client/react/ModalStackProvider.ts
 import { ModalRoot } from '../../src/client/react/ModalRoot.tsx'
 import { ModalLink } from '../../src/client/react/ModalLink.tsx'
 import { Modal } from '../../src/client/react/Modal.tsx'
+import useModal from '../../src/client/react/use_modal.ts'
 import type { HttpClientLike } from '../../src/client/core/open.ts'
 import type { PageInfo } from '../../src/client/react/types.ts'
 
@@ -24,6 +25,22 @@ function ShowUser(props: { name?: string }) {
   )
 }
 
+/** A modal page exposing reloadable props and validation errors via useModal(). */
+function UserForm() {
+  const modal = useModal()!
+  return (
+    <Modal>
+      <div>
+        <span>count: {String(modal.props.count ?? 0)}</span>
+        {modal.errors.email ? <span>error: {modal.errors.email}</span> : null}
+        <button type="button" onClick={() => modal.reload()}>
+          reload
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
 function clientReturning(modal: unknown): HttpClientLike {
   return { request: () => Promise.resolve({ data: { props: { modal } } }) }
 }
@@ -35,13 +52,15 @@ function renderApp(options: {
   client?: HttpClientLike
   navigate?: (url: string) => void
   ui?: React.ReactNode
+  component?: React.ComponentType<any>
 }) {
   const client =
     options.client ?? clientReturning({ component: 'users/show', props: {}, key: 'k1' })
+  const Component = options.component ?? ShowUser
   return render(
     <ModalStackProvider
       httpClient={client}
-      resolveComponent={async () => ShowUser as never}
+      resolveComponent={async () => Component as never}
       usePageHook={() => options.page ?? basePage}
       navigate={options.navigate}
     >
@@ -105,5 +124,50 @@ test.group('react | deep-link (page props modal)', (group) => {
     fireEvent.click(screen.getByText('close-modal'))
     await waitFor(() => assert.isNull(screen.queryByText('User: Deep')))
     assert.equal(navigatedTo, '/users')
+  })
+})
+
+test.group('react | forms & reload', (group) => {
+  group.each.teardown(() => cleanup())
+
+  test('exposes validation errors via useModal().errors', async ({ assert }) => {
+    renderApp({
+      component: UserForm,
+      page: {
+        ...basePage,
+        props: {
+          modal: { component: 'users/form', props: {}, key: 'k1' },
+          errors: { email: 'Required' },
+        },
+      },
+    })
+
+    assert.isNotNull(await screen.findByText('error: Required'))
+  })
+
+  test('useModal().reload() re-fetches and updates the modal props', async ({ assert }) => {
+    let calls = 0
+    const client: HttpClientLike = {
+      request: () => {
+        calls += 1
+        return Promise.resolve({
+          data: {
+            props: { modal: { component: 'users/form', props: { count: calls }, key: 'k1' } },
+          },
+        })
+      },
+    }
+
+    renderApp({
+      component: UserForm,
+      client,
+      ui: <ModalLink href="/users/1/form">Open</ModalLink>,
+    })
+
+    fireEvent.click(screen.getByText('Open'))
+    assert.isNotNull(await screen.findByText('count: 1'))
+
+    fireEvent.click(screen.getByText('reload'))
+    assert.isNotNull(await screen.findByText('count: 2'))
   })
 })

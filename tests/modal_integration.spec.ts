@@ -90,4 +90,37 @@ test.group('ModalResponse | integration', (group) => {
     assert.deepEqual(page.props.users, ['a', 'b'])
     assert.equal(page.props.modal.component, 'users/show')
   })
+
+  test('reuses the client modal key on a validation-error response', async ({ assert }) => {
+    const { ctx, inertia } = await modalContext({
+      [InertiaHeaders.Inertia]: 'true',
+      [InertiaHeaders.PartialComponent]: 'users/index',
+      [InertiaHeaders.PartialOnly]: 'modal',
+      'x-inertia-modal-key': 'reused-key',
+    })
+
+    // Simulate a flashed validation error bag in the session.
+    ;(ctx as any).session = {
+      flashMessages: {
+        get: (key: string) => (key === 'inputErrorsBag' ? { email: ['Required'] } : undefined),
+      },
+    }
+
+    const page: any = await inertia.modal('users/show', {}).baseRoute('users.index')
+
+    assert.equal(page.props.modal.key, 'reused-key')
+  })
+
+  test('mints a fresh key on a normal (non-validation) modal open', async ({ assert }) => {
+    const { inertia } = await modalContext({
+      [InertiaHeaders.Inertia]: 'true',
+      [InertiaHeaders.PartialComponent]: 'users/index',
+      [InertiaHeaders.PartialOnly]: 'modal',
+      'x-inertia-modal-key': 'previous-key',
+    })
+
+    const page: any = await inertia.modal('users/show', {}).baseRoute('users.index')
+
+    assert.notEqual(page.props.modal.key, 'previous-key')
+  })
 })
