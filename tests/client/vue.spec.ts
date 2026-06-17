@@ -768,6 +768,58 @@ test.group('vue | presentation & helpers', (group) => {
     assert.isNull(document.querySelector('dialog.im-dialog'))
   })
 
+  test('getParentModal / getChildModal navigate the stack', async ({ assert }) => {
+    const ModalA = defineComponent({
+      setup() {
+        const m = useModal()
+        return () =>
+          h(Modal, null, {
+            default: () =>
+              h('div', [
+                h(ModalLink, { href: '/b' }, { default: () => 'open-b' }),
+                h('span', `A-child:${m.value?.getChildModal() ? 'yes' : 'no'}`),
+              ]),
+          })
+      },
+    })
+    const ModalB = defineComponent({
+      setup() {
+        const m = useModal()
+        return () =>
+          h(Modal, null, {
+            default: () =>
+              h('span', `B-parent:${String(m.value?.getParentModal()?.props.tag ?? 'none')}`),
+          })
+      },
+    })
+    const client: HttpClientLike = {
+      request: ({ url }) =>
+        Promise.resolve({
+          data: {
+            props: {
+              modal: url.includes('/b')
+                ? { component: 'mod/b', props: {}, key: 'kb' }
+                : { component: 'mod/a', props: { tag: 'A' }, key: 'ka' },
+            },
+          },
+        }),
+    }
+
+    const { wrapper } = mountApp({
+      client,
+      resolve: async (name) => (name === 'mod/b' ? ModalB : ModalA),
+      ui: () => h(ModalLink, { href: '/a' }, { default: () => 'open-a' }),
+    })
+
+    await clickText(wrapper, 'open-a')
+    await tick()
+    await clickText(wrapper, 'open-b')
+    await tick()
+
+    assert.include(wrapper.text(), 'B-parent:A')
+    assert.include(wrapper.text(), 'A-child:yes')
+  })
+
   test('closeAll() closes every open modal in the stack', async ({ assert }) => {
     const ModalA = defineComponent({
       setup() {

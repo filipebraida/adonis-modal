@@ -33,11 +33,19 @@ export class ModalStack {
 
   #reindex(): void {
     const last = this.#entries.length - 1
-    this.#entries = this.#entries.map((entry, index) => ({
-      ...entry,
-      index,
-      onTopOfStack: index === last,
-    }))
+    const transitions: Array<{ emitter: EventEmitter; focused: boolean }> = []
+    this.#entries = this.#entries.map((entry, index) => {
+      const onTopOfStack = index === last
+      if (entry.onTopOfStack !== onTopOfStack) {
+        transitions.push({ emitter: entry.emitter, focused: onTopOfStack })
+      }
+      return { ...entry, index, onTopOfStack }
+    })
+    // A modal loses focus when another stacks on top (`blur`) and regains it
+    // when the one above closes (`focus`). Fired after the array is rebuilt.
+    for (const { emitter, focused } of transitions) {
+      emitter.emit(focused ? 'focus' : 'blur')
+    }
   }
 
   push(payload: ModalResponsePayload, options: PushOptions = {}): ModalEntry {

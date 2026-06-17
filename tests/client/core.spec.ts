@@ -217,6 +217,20 @@ test.group('core | ModalStack', () => {
     assert.isTrue(stack.get('k1')!.onTopOfStack)
   })
 
+  test('fires blur on the modal below when one stacks, and focus when it closes', ({ assert }) => {
+    const stack = new ModalStack()
+    const events: string[] = []
+    const a = stack.push({ component: 'a', props: {}, key: 'ka' })
+    a.emitter.on('blur', () => events.push('blur'))
+    a.emitter.on('focus', () => events.push('focus'))
+
+    stack.push({ component: 'b', props: {}, key: 'kb' }) // A loses focus
+    assert.deepEqual(events, ['blur'])
+
+    stack.remove('kb') // A regains focus
+    assert.deepEqual(events, ['blur', 'focus'])
+  })
+
   test('reset fires onAfterLeave for teardown (not onClose) and clears the stack', ({ assert }) => {
     const stack = new ModalStack()
     const events: string[] = []

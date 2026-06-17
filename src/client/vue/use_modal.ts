@@ -22,6 +22,10 @@ export interface UseModalReturn {
   reload: (options?: ReloadOptions) => Promise<void>
   emit: (event: string, ...args: unknown[]) => void
   on: (event: string, callback: (...args: unknown[]) => void) => () => void
+  /** The modal directly below this one in the stack, or null. */
+  getParentModal: () => UseModalReturn | null
+  /** The modal directly above this one in the stack, or null. */
+  getChildModal: () => UseModalReturn | null
 }
 
 /** Stable empty-errors reference so consumers keying effects on `errors` don't churn. */
@@ -43,6 +47,14 @@ function createModalInstance(entry: ModalEntry, ctx: ModalContext): UseModalRetu
     reload: (options) => ctx.reload(entry.id, options),
     emit: (event, ...args) => entry.emitter.emit(event, ...args),
     on: (event, callback) => entry.emitter.on(event, callback),
+    getParentModal: () => {
+      const parent = ctx.stack.value[entry.index - 1]
+      return parent ? createModalInstance(parent, ctx) : null
+    },
+    getChildModal: () => {
+      const child = ctx.stack.value[entry.index + 1]
+      return child ? createModalInstance(child, ctx) : null
+    },
   }
 }
 

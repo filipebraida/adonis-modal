@@ -787,6 +787,50 @@ test.group('react | presentation & helpers', (group) => {
     assert.isNull(document.querySelector('dialog.im-dialog'))
   })
 
+  test('getParentModal / getChildModal navigate the stack', async ({ assert }) => {
+    function ModalA() {
+      const m = useModal()!
+      return (
+        <Modal>
+          <ModalLink href="/b">open-b</ModalLink>
+          <span>A-child:{m.getChildModal() ? 'yes' : 'no'}</span>
+        </Modal>
+      )
+    }
+    function ModalB() {
+      const m = useModal()!
+      return (
+        <Modal>
+          <span>B-parent:{String(m.getParentModal()?.props.tag ?? 'none')}</span>
+        </Modal>
+      )
+    }
+    const client: HttpClientLike = {
+      request: ({ url }) =>
+        Promise.resolve({
+          data: {
+            props: {
+              modal: url.includes('/b')
+                ? { component: 'mod/b', props: {}, key: 'kb' }
+                : { component: 'mod/a', props: { tag: 'A' }, key: 'ka' },
+            },
+          },
+        }),
+    }
+
+    renderApp({
+      client,
+      resolve: async (name) => (name === 'mod/b' ? ModalB : ModalA),
+      ui: <ModalLink href="/a">open-a</ModalLink>,
+    })
+
+    fireEvent.click(screen.getByText('open-a'))
+    fireEvent.click(await screen.findByText('open-b'))
+
+    assert.isNotNull(await screen.findByText('B-parent:A')) // child sees parent's props
+    assert.isNotNull(await screen.findByText('A-child:yes')) // parent sees the child
+  })
+
   test('closeAll() closes every open modal in the stack', async ({ assert }) => {
     function ModalA() {
       const { closeAll } = useModalStack()

@@ -7,6 +7,16 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 First usable release. React and Vue 3 support.
 
+### Unreleased (since beta.1)
+
+- `<Modal>` accepts presentation props so a page can declare its own appearance
+  (`slideover`, `maxWidth`, `position`, `paddingClasses`, `panelClasses`,
+  `closeButton`, `closeExplicitly`, `closeOnClickOutside`); the opener's config
+  still wins, then these, then the global config.
+- `useModal()` gains `getParentModal()` / `getChildModal()` to navigate the stack,
+  and stacked modals receive `blur` / `focus` events on their event bus when
+  another modal opens on top / closes (`useModal().on('blur', …)`).
+
 ### beta.1
 
 First beta. Feature-complete vs. the alpha line; React validated end-to-end in a

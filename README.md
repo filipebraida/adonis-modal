@@ -215,8 +215,11 @@ export default function ShowUser({ user }) {
 }
 ```
 
-`useModal()` (inside a modal) returns `{ props, errors, config, isOpen,
-onTopOfStack, close, reload, emit, on }`.
+`useModal()` (inside a modal) returns `{ props, errors, config, isOpen, index,
+onTopOfStack, close, reload, emit, on, getParentModal, getChildModal }`.
+`getParentModal()` / `getChildModal()` return the modal directly below / above in
+the stack (or null). A stacked modal also receives `blur` (another modal opened on
+top) and `focus` (it became top again) on its event bus — `useModal().on('blur', …)`.
 
 ### Forms & validation
 
