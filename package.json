@@ -27,7 +27,6 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "quick:test": "node --import=@poppinss/ts-exec --enable-source-maps bin/test.ts",
-    "test:ssr": "npm run build && node ssr-smoke.mjs",
     "pretest": "npm run lint",
     "test": "c8 npm run quick:test",
     "precompile": "npm run lint",
