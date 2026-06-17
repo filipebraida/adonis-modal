@@ -215,8 +215,11 @@ putConfig('slideover.position', 'left')
 
 ## How it works
 
-See [`docs/`](./docs) for the research, the backend-driven architecture, the
-server-dispatch spike, the inertiaui feature reference and the phase plan.
+The controller shares a `modal` envelope on a normal Inertia page. When opened
+via a link, the client issues a controlled partial request so only the modal is
+fetched and the current page stays as the backdrop. When opened directly by URL,
+the server dispatches the base route to render the backdrop, then layers the
+modal on top — keeping the modal route deep-linkable.
 
 ## Credits
 

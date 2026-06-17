@@ -10,3 +10,10 @@ package-lock.json
 
 # Local example app (not committed)
 playground
+
+# Playwright MCP artifacts and local screenshots
+.playwright-mcp
+*.png
+
+# Internal docs (kept locally for dev reference, not published)
+docs
