@@ -2,6 +2,7 @@
  * adonis-modal — React client
  */
 
+import type { ModalOptions } from '../core/types.ts'
 import { useModalIndex, useModalStack } from './context.ts'
 import type { ReloadOptions } from './types.ts'
 
@@ -10,6 +11,8 @@ export interface UseModalReturn {
   props: Record<string, unknown>
   /** Validation errors shared by the server (Inertia `errors` prop). */
   errors: Record<string, string>
+  /** Per-modal presentation config (slideover, position, ...). */
+  config: ModalOptions
   isOpen: boolean
   index: number
   onTopOfStack: boolean
@@ -36,6 +39,7 @@ export default function useModal(): UseModalReturn | null {
     id: entry.id,
     props: entry.props,
     errors: (page.props?.errors as Record<string, string>) ?? {},
+    config: entry.config,
     isOpen: entry.isOpen,
     index: entry.index,
     onTopOfStack: entry.onTopOfStack,

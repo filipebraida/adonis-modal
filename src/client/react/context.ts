@@ -12,6 +12,8 @@ export interface ModalStackContextValue {
   page: PageInfo
   resolve: (name: string) => Promise<ComponentType>
   visit: (href: string, options?: VisitOptions) => Promise<ModalEntry>
+  /** Programmatic alias of visit() for opening a modal from code. */
+  visitModal: (href: string, options?: VisitOptions) => Promise<ModalEntry>
   close: (id: string) => void
   reload: (id: string, options?: ReloadOptions) => Promise<void>
 }

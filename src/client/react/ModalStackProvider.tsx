@@ -181,6 +181,7 @@ export function ModalStackProvider({
     page,
     resolve,
     visit,
+    visitModal: visit,
     close,
     reload,
   }

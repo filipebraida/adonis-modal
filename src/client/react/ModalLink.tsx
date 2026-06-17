@@ -4,7 +4,7 @@
 
 import { useCallback, useState, type ElementType, type MouseEvent, type ReactNode } from 'react'
 
-import type { HttpMethod } from '../core/types.ts'
+import type { HttpMethod, ModalOptions } from '../core/types.ts'
 import { useModalStack } from './context.ts'
 
 export interface ModalLinkProps {
@@ -13,6 +13,10 @@ export interface ModalLinkProps {
   data?: Record<string, unknown>
   headers?: Record<string, string>
   as?: ElementType
+  /** Per-modal presentation overrides (maxWidth, position, panelClasses, ...). */
+  config?: ModalOptions
+  /** Open as a slideover instead of a centered modal. */
+  slideover?: boolean
   onStart?: () => void
   onSuccess?: () => void
   onError?: (error: unknown) => void
@@ -35,6 +39,8 @@ export function ModalLink({
   data,
   headers,
   as: Component = 'a',
+  config,
+  slideover,
   onStart,
   onSuccess,
   onError,
@@ -69,6 +75,7 @@ export function ModalLink({
           method,
           data,
           headers,
+          config: { ...config, ...(slideover !== undefined ? { slideover } : {}) },
           onStart,
           onSuccess,
           onError,
@@ -82,7 +89,7 @@ export function ModalLink({
         setLoading(false)
       }
     },
-    [href, method, data, headers, loading, visit]
+    [href, method, data, headers, config, slideover, loading, visit]
   )
 
   return (

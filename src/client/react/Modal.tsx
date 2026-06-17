@@ -16,8 +16,9 @@ export interface ModalProps {
  * Wraps a page's content so it renders as a modal. Reads the current modal
  * instance from context; renders nothing when not inside a modal or when closed.
  *
- * Note: this is a minimal overlay for the MVP. Native <dialog>, focus trapping,
- * sizes/positions and slideovers come in later phases.
+ * Note: this is a minimal overlay for the MVP. Native <dialog>, focus trapping
+ * and full styling come in a later phase; slideover/position are applied as
+ * class names here so they can be styled.
  */
 export function Modal({ children, onClose, closeButton = true }: ModalProps) {
   const modal = useModal()
@@ -31,10 +32,25 @@ export function Modal({ children, onClose, closeButton = true }: ModalProps) {
     modal.close()
   }
 
+  const isSlideover = modal.config.slideover === true
+  const position = typeof modal.config.position === 'string' ? modal.config.position : undefined
+  const panelClass = [
+    'im-panel',
+    isSlideover ? 'im-slideover' : 'im-modal',
+    position ? `im-position-${position}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
-    <div className="im-backdrop" data-modal-id={modal.id} onClick={handleClose}>
+    <div
+      className="im-backdrop"
+      data-modal-id={modal.id}
+      data-modal-index={modal.index}
+      onClick={handleClose}
+    >
       <div
-        className="im-panel"
+        className={panelClass}
         role="dialog"
         aria-modal="true"
         onClick={(event) => event.stopPropagation()}

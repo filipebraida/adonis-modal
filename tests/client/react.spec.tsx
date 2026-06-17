@@ -53,14 +53,16 @@ function renderApp(options: {
   navigate?: (url: string) => void
   ui?: React.ReactNode
   component?: React.ComponentType<any>
+  resolve?: (name: string) => Promise<React.ComponentType<any>>
 }) {
   const client =
     options.client ?? clientReturning({ component: 'users/show', props: {}, key: 'k1' })
   const Component = options.component ?? ShowUser
+  const resolve = options.resolve ?? (async () => Component)
   return render(
     <ModalStackProvider
       httpClient={client}
-      resolveComponent={async () => Component as never}
+      resolveComponent={resolve as never}
       usePageHook={() => options.page ?? basePage}
       navigate={options.navigate}
     >
@@ -169,5 +171,97 @@ test.group('react | forms & reload', (group) => {
 
     fireEvent.click(screen.getByText('reload'))
     assert.isNotNull(await screen.findByText('count: 2'))
+  })
+})
+
+test.group('react | nested, slideover & event bus', (group) => {
+  group.each.teardown(() => cleanup())
+
+  test('opens a modal from within a modal (stacked)', async ({ assert }) => {
+    function ModalA() {
+      return (
+        <Modal>
+          <ModalLink href="/b">open-b</ModalLink>
+        </Modal>
+      )
+    }
+    function ModalB() {
+      return (
+        <Modal>
+          <span>Modal B</span>
+        </Modal>
+      )
+    }
+
+    const client: HttpClientLike = {
+      request: ({ url }) =>
+        Promise.resolve({
+          data: {
+            props: {
+              modal: url.includes('/b')
+                ? { component: 'mod/b', props: {}, key: 'kb' }
+                : { component: 'mod/a', props: {}, key: 'ka' },
+            },
+          },
+        }),
+    }
+
+    renderApp({
+      client,
+      resolve: async (name) => (name === 'mod/b' ? ModalB : ModalA),
+      ui: <ModalLink href="/a">open-a</ModalLink>,
+    })
+
+    fireEvent.click(screen.getByText('open-a'))
+    fireEvent.click(await screen.findByText('open-b'))
+
+    assert.isNotNull(await screen.findByText('Modal B'))
+    assert.isNotNull(screen.queryByText('open-b')) // parent modal still mounted
+  })
+
+  test('opens as a slideover when slideover is set', async ({ assert }) => {
+    const { container } = renderApp({
+      client: clientReturning({ component: 'users/show', props: { name: 'S' }, key: 'k1' }),
+      ui: (
+        <ModalLink href="/users/1" slideover>
+          open
+        </ModalLink>
+      ),
+    })
+
+    fireEvent.click(screen.getByText('open'))
+    await screen.findByText('User: S')
+    assert.isNotNull(
+      (container as { querySelector(s: string): unknown }).querySelector('.im-slideover')
+    )
+  })
+
+  test('emits events from a modal to a ModalLink listener (event bus)', async ({ assert }) => {
+    let received: unknown = null
+    function Emitter() {
+      const modal = useModal()!
+      return (
+        <Modal>
+          <button type="button" onClick={() => modal.emit('saved', 'hi')}>
+            do-save
+          </button>
+        </Modal>
+      )
+    }
+
+    renderApp({
+      component: Emitter,
+      client: clientReturning({ component: 'm', props: {}, key: 'k1' }),
+      ui: (
+        <ModalLink href="/m" onSaved={(value: unknown) => (received = value)}>
+          open
+        </ModalLink>
+      ),
+    })
+
+    fireEvent.click(screen.getByText('open'))
+    fireEvent.click(await screen.findByText('do-save'))
+
+    assert.equal(received, 'hi')
   })
 })
