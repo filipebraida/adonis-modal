@@ -251,6 +251,25 @@ export default function CreateNote() {
 `useModal().errors` also exposes the shared errors, and `useModal().reload({ only })`
 re-fetches specific (deferred) props.
 
+### Error handling
+
+Opening a modal via link expects the server to return `inertia.modal(...)`. If it
+returns anything else — a `404` (e.g. `findOrFail` on a missing record), an auth
+redirect, or any other non-modal response — the open fails: the modal doesn't
+appear and, **by default, the error is logged to the console** so it isn't silent.
+
+Pass `onError` to handle it your way (and silence the default log):
+
+```tsx
+<ModalLink href={`/institutos/${id}/edit`} onError={() => toast.error('Not found')}>
+  Edit
+</ModalLink>
+```
+
+In Vue, attach `@error`. To handle a missing record gracefully, prefer returning a
+modal from the server (`return inertia.modal('institutos/not-found', { id }).baseRoute(...)`)
+or use `navigate` so the route opens as a full page (showing your real 404).
+
 ### Deferred / lazy props
 
 ```tsx

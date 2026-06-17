@@ -769,3 +769,48 @@ test.group('vue | presentation & helpers', (group) => {
     assert.notInclude(wrapper.text(), 'Modal B')
   })
 })
+
+test.group('vue | error handling', (group) => {
+  group.each.teardown(() => {
+    wrappers.splice(0).forEach((w) => w.unmount())
+  })
+
+  const nonModalClient: HttpClientLike = { request: () => Promise.resolve({ data: { props: {} } }) }
+
+  test('a failed open logs to the console by default', async ({ assert }) => {
+    const original = console.error
+    const logs: string[] = []
+    console.error = (...args: unknown[]) => logs.push(String(args[0]))
+    try {
+      const { wrapper } = mountApp({
+        client: nonModalClient,
+        ui: () => h(ModalLink, { href: '/x' }, { default: () => 'Open' }),
+      })
+      await clickText(wrapper, 'Open')
+      await tick()
+      assert.isTrue(logs.some((l) => l.includes('Failed to open modal')))
+    } finally {
+      console.error = original
+    }
+  })
+
+  test('@error overrides the default console log', async ({ assert }) => {
+    const original = console.error
+    const logs: string[] = []
+    console.error = (...args: unknown[]) => logs.push(String(args[0]))
+    let errored = false
+    try {
+      const { wrapper } = mountApp({
+        client: nonModalClient,
+        ui: () =>
+          h(ModalLink, { href: '/x', onError: () => (errored = true) }, { default: () => 'Open' }),
+      })
+      await clickText(wrapper, 'Open')
+      await tick()
+      assert.isTrue(errored)
+      assert.isFalse(logs.some((l) => l.includes('Failed to open modal')))
+    } finally {
+      console.error = original
+    }
+  })
+})

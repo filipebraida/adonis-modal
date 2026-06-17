@@ -121,7 +121,16 @@ export function createModalContext(options: ModalPluginOptions = {}): ModalConte
       opts.onSuccess?.()
       return entry
     } catch (error) {
-      opts.onError?.(error)
+      // Default behavior: log so a failed open (404, auth redirect, non-modal
+      // response) isn't silent. Pass onError to override (e.g. a toast).
+      if (opts.onError) {
+        opts.onError(error)
+      } else {
+        console.error(
+          '[adonis-inertia-modal] Failed to open modal (pass onError to handle):',
+          error
+        )
+      }
       throw error
     }
   }

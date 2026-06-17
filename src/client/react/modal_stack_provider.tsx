@@ -193,7 +193,13 @@ export function ModalStackProvider({
         options.onSuccess?.()
         return entry
       } catch (error) {
-        options.onError?.(error)
+        // Default behavior: log so a failed open (404, auth redirect, non-modal
+        // response) isn't silent. Pass onError to override (e.g. a toast).
+        if (options.onError) {
+          options.onError(error)
+        } else {
+          console.error('[adonis-inertia-modal] Failed to open modal (pass onError to handle):', error)
+        }
         throw error
       }
     },

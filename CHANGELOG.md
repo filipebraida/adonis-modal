@@ -7,6 +7,12 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 First usable release. React and Vue 3 support.
 
+### Unreleased (since alpha.5)
+
+- A failed modal open (non-modal response: 404, auth redirect, …) now logs to the
+  console by default instead of failing silently; pass `onError` / `@error` to
+  override (e.g. a toast).
+
 ### alpha.5
 
 - Panel presentation config is now applied: `maxWidth` (token → `im-max-w-*`

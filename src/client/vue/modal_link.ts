@@ -2,7 +2,16 @@
  * adonis-inertia-modal — Vue client
  */
 
-import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, type PropType } from 'vue'
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  h,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  type PropType,
+} from 'vue'
 
 import { getConfig } from '../core/config.ts'
 import type { HttpMethod, ModalOptions } from '../core/types.ts'
@@ -44,6 +53,10 @@ export const ModalLink = defineComponent({
   setup(props, { slots, emit, attrs }) {
     const { visit, prefetch: prefetchModal, navigate: doNavigate } = useModalStack()
     const loading = ref(false)
+    // Only forward onError when the parent actually listens to @error; otherwise
+    // leave it undefined so the context's default (console.error) kicks in.
+    const instance = getCurrentInstance()
+    const hasErrorListener = () => !!instance?.vnode.props?.onError
     let hoverTimeout: ReturnType<typeof setTimeout> | null = null
 
     const prefetchModes = computed<PrefetchMode[]>(() => {
@@ -106,7 +119,7 @@ export const ModalLink = defineComponent({
           history: props.history,
           onStart: () => emit('start'),
           onSuccess: () => emit('success'),
-          onError: (error) => emit('error', error),
+          onError: hasErrorListener() ? (error) => emit('error', error) : undefined,
           onClose: () => emit('close'),
           onAfterLeave: () => emit('afterLeave'),
           listeners,

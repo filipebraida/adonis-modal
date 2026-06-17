@@ -782,3 +782,45 @@ test.group('react | presentation & helpers', (group) => {
     })
   })
 })
+
+test.group('react | error handling', (group) => {
+  group.each.teardown(() => cleanup())
+
+  // A response without props.modal (e.g. a 404 from findOrFail, an auth redirect).
+  const nonModalClient: HttpClientLike = { request: () => Promise.resolve({ data: { props: {} } }) }
+
+  test('a failed open logs to the console by default', async ({ assert }) => {
+    const original = console.error
+    const logs: string[] = []
+    console.error = (...args: unknown[]) => logs.push(String(args[0]))
+    try {
+      renderApp({ client: nonModalClient, ui: <ModalLink href="/x">Open</ModalLink> })
+      fireEvent.click(screen.getByText('Open'))
+      await waitFor(() => assert.isTrue(logs.some((l) => l.includes('Failed to open modal'))))
+    } finally {
+      console.error = original
+    }
+  })
+
+  test('onError overrides the default console log', async ({ assert }) => {
+    const original = console.error
+    const logs: string[] = []
+    console.error = (...args: unknown[]) => logs.push(String(args[0]))
+    let errored = false
+    try {
+      renderApp({
+        client: nonModalClient,
+        ui: (
+          <ModalLink href="/x" onError={() => (errored = true)}>
+            Open
+          </ModalLink>
+        ),
+      })
+      fireEvent.click(screen.getByText('Open'))
+      await waitFor(() => assert.isTrue(errored))
+      assert.isFalse(logs.some((l) => l.includes('Failed to open modal')))
+    } finally {
+      console.error = original
+    }
+  })
+})
