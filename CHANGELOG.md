@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 First usable release. React and Vue 3 support.
 
-### Unreleased (since alpha.5)
+### alpha.6
 
 - A failed modal open (non-modal response: 404, auth redirect, …) now logs to the
   console by default instead of failing silently; pass `onError` / `@error` to
