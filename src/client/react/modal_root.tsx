@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { usePage as inertiaUsePage } from '@inertiajs/react'
 
 import { useModalStack } from './context.ts'
-import { ModalRenderer } from './ModalRenderer.tsx'
+import { ModalRenderer } from './modal_renderer.tsx'
 import type { PageInfo } from './types.ts'
 
 export interface ModalRootProps {

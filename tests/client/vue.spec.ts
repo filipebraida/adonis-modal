@@ -12,7 +12,7 @@ import {
 import { modal as modalPlugin } from '../../src/client/vue/plugin.ts'
 import { ModalRoot } from '../../src/client/vue/modal_root.ts'
 import { ModalLink } from '../../src/client/vue/modal_link.ts'
-import { Modal } from '../../src/client/vue/modal_component.ts'
+import { Modal } from '../../src/client/vue/modal.ts'
 import { Deferred } from '../../src/client/vue/deferred.ts'
 import { HeadlessModal } from '../../src/client/vue/headless_modal.ts'
 import { useModalStack } from '../../src/client/vue/context.ts'

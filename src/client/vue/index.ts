@@ -5,7 +5,7 @@
 export { modal, createModalContext, type ModalPluginOptions } from './plugin.ts'
 export { ModalRoot } from './modal_root.ts'
 export { ModalRenderer } from './modal_renderer.ts'
-export { Modal } from './modal_component.ts'
+export { Modal } from './modal.ts'
 export { ModalLink } from './modal_link.ts'
 export { Deferred } from './deferred.ts'
 export { WhenVisible } from './when_visible.ts'

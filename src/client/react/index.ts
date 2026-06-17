@@ -2,14 +2,14 @@
  * adonis-inertia-modal — React client entrypoint
  */
 
-export { ModalStackProvider, type ModalStackProviderProps } from './ModalStackProvider.tsx'
-export { ModalRoot } from './ModalRoot.tsx'
-export { ModalRenderer } from './ModalRenderer.tsx'
-export { Modal, type ModalProps } from './Modal.tsx'
-export { ModalLink, type ModalLinkProps } from './ModalLink.tsx'
-export { Deferred, type DeferredProps } from './Deferred.tsx'
-export { WhenVisible, type WhenVisibleProps } from './WhenVisible.tsx'
-export { HeadlessModal, type HeadlessModalProps } from './HeadlessModal.tsx'
+export { ModalStackProvider, type ModalStackProviderProps } from './modal_stack_provider.tsx'
+export { ModalRoot } from './modal_root.tsx'
+export { ModalRenderer } from './modal_renderer.tsx'
+export { Modal, type ModalProps } from './modal.tsx'
+export { ModalLink, type ModalLinkProps } from './modal_link.tsx'
+export { Deferred, type DeferredProps } from './deferred.tsx'
+export { WhenVisible, type WhenVisibleProps } from './when_visible.tsx'
+export { HeadlessModal, type HeadlessModalProps } from './headless_modal.tsx'
 export { useResolvedModal } from './use_modal.ts'
 export { default as useModal, type UseModalReturn } from './use_modal.ts'
 export { useModalStack, useModalIndex, type ModalStackContextValue } from './context.ts'
