@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](https://semver.org).
 
 First usable release. React and Vue 3 support.
 
-### Unreleased (since beta.2)
+### beta.3
 
 - **Breaking:** the backdrop is now a required 3rd argument of `inertia.modal()`,
   typed `{ route, params?, qs? } | { url }`, instead of the chainable `.baseRoute()`
