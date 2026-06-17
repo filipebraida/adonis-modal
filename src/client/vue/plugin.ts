@@ -104,6 +104,7 @@ export function createModalContext(options: ModalPluginOptions = {}): ModalConte
           currentComponent: current.component,
           version: current.version,
           redirectUrl: current.url,
+          queryStringArrayFormat: opts.queryStringArrayFormat,
         }))
 
       const entry = instance.push(payload, {

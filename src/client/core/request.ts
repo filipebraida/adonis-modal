@@ -28,6 +28,8 @@ export interface BuildModalRequestParams {
   only?: string[]
   modalKey?: string
   redirectUrl?: string
+  /** How array values are serialized into the GET query string. */
+  queryStringArrayFormat?: 'brackets' | 'indices'
 }
 
 export interface ModalRequest {
@@ -36,6 +38,7 @@ export interface ModalRequest {
   data: Record<string, unknown> | undefined
   params: Record<string, unknown> | undefined
   headers: Record<string, string>
+  queryStringArrayFormat?: 'brackets' | 'indices'
 }
 
 /**
@@ -71,6 +74,7 @@ export function buildModalRequest(params: BuildModalRequestParams): ModalRequest
     data: method === 'get' ? undefined : data,
     params: method === 'get' ? data : undefined,
     headers,
+    queryStringArrayFormat: params.queryStringArrayFormat,
   }
 }
 

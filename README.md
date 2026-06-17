@@ -335,6 +335,19 @@ putConfig({ modal: { maxWidth: 'lg', closeButton: false } })
 putConfig('slideover.position', 'left')
 ```
 
+### Styling
+
+Default styles ship in `adonis-inertia-modal/styles.css`; everything is prefixed
+with `im-` so you can restyle freely:
+
+- `.im-dialog` — the native `<dialog>` (full-viewport flex container); `::backdrop`
+  is the overlay (target with plain CSS: `.im-dialog::backdrop { … }`).
+- `.im-modal` / `.im-slideover` and `.im-position-{center,top,bottom,left,right}`.
+- `.im-panel` — the content panel; `.im-max-w-{sm…7xl,full}` (from `maxWidth`),
+  plus any `paddingClasses` / `panelClasses` you pass.
+- `.im-close-button`. Enter/leave use `@starting-style` / `[data-leaving]` and
+  honor `prefers-reduced-motion`.
+
 ## How it works
 
 The controller shares a `modal` envelope on a normal Inertia page. When opened

@@ -16,6 +16,11 @@ First usable release. React and Vue 3 support.
 - `useModal()` gains `getParentModal()` / `getChildModal()` to navigate the stack,
   and stacked modals receive `blur` / `focus` events on their event bus when
   another modal opens on top / closes (`useModal().on('blur', …)`).
+- `<ModalLink>` emits `prefetching` / `prefetched` (`onPrefetching` / `onPrefetched`
+  in React) around a prefetch.
+- Array/nested values in GET `data` are now serialized properly (previously an
+  array became `key=1,2`); `visit`/`visitModal` take `queryStringArrayFormat`
+  (`'brackets'` default, or `'indices'`).
 
 ### beta.1
 

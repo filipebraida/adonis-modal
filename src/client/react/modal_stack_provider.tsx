@@ -171,6 +171,7 @@ export function ModalStackProvider({
             currentComponent: current.component,
             version: current.version,
             redirectUrl: current.url,
+            queryStringArrayFormat: options.queryStringArrayFormat,
           }))
 
         const entry = stackInstance.push(payload, {

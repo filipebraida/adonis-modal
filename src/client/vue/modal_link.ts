@@ -49,7 +49,7 @@ export const ModalLink = defineComponent({
     /** Navigate to the route as a full page instead of opening a modal. */
     navigate: { type: Boolean, default: undefined },
   },
-  emits: ['start', 'success', 'error', 'close', 'afterLeave'],
+  emits: ['start', 'success', 'error', 'close', 'afterLeave', 'prefetching', 'prefetched'],
   setup(props, { slots, emit, attrs }) {
     const { visit, prefetch: prefetchModal, navigate: doNavigate } = useModalStack()
     const loading = ref(false)
@@ -66,12 +66,15 @@ export const ModalLink = defineComponent({
     })
 
     const doPrefetch = () => {
+      emit('prefetching')
       prefetchModal(props.href, {
         method: props.method,
         data: props.data,
         headers: props.headers,
         cacheFor: props.cacheFor,
-      }).catch(() => {})
+      })
+        .then(() => emit('prefetched'))
+        .catch(() => {})
     }
 
     onMounted(() => {

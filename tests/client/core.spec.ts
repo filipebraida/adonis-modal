@@ -4,6 +4,7 @@ import { Config } from '../../src/client/core/config.ts'
 import { EventEmitter } from '../../src/client/core/event_emitter.ts'
 import { ModalStack } from '../../src/client/core/stack.ts'
 import { buildModalRequest, parseModalPayload } from '../../src/client/core/request.ts'
+import { serializeParams } from '../../src/client/core/fetch_client.ts'
 import { lockBodyScroll } from '../../src/client/core/scroll_lock.ts'
 import { ModalHistory } from '../../src/client/core/history.ts'
 import { PrefetchCache } from '../../src/client/core/prefetch_cache.ts'
@@ -89,6 +90,21 @@ test.group('core | resolvePanelClasses', () => {
       false
     )
     assert.equal(classes, 'im-panel im-max-w-lg p-8 shadow-xl ring')
+  })
+})
+
+test.group('core | serializeParams', () => {
+  test('serializes arrays with brackets by default and indices on request', ({ assert }) => {
+    const brackets = decodeURIComponent(serializeParams({ tags: [1, 2] }))
+    assert.equal(brackets, 'tags[]=1&tags[]=2')
+
+    const indices = decodeURIComponent(serializeParams({ tags: [1, 2] }, 'indices'))
+    assert.equal(indices, 'tags[0]=1&tags[1]=2')
+  })
+
+  test('serializes nested objects and skips null/undefined', ({ assert }) => {
+    const q = decodeURIComponent(serializeParams({ filter: { status: 'open' }, a: null, b: 1 }))
+    assert.equal(q, 'filter[status]=open&b=1')
   })
 })
 

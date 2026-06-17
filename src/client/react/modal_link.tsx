@@ -41,6 +41,8 @@ export interface ModalLinkProps {
   onError?: (error: unknown) => void
   onClose?: () => void
   onAfterLeave?: () => void
+  onPrefetching?: () => void
+  onPrefetched?: () => void
   children: ReactNode | ((state: { loading: boolean }) => ReactNode)
   [key: string]: unknown
 }
@@ -69,6 +71,8 @@ export function ModalLink({
   onError,
   onClose,
   onAfterLeave,
+  onPrefetching,
+  onPrefetched,
   children,
   ...rest
 }: ModalLinkProps) {
@@ -83,8 +87,11 @@ export function ModalLink({
   }, [prefetch])
 
   const doPrefetch = useCallback(() => {
-    prefetchModal(href, { method, data, headers, cacheFor }).catch(() => {})
-  }, [prefetchModal, href, method, data, headers, cacheFor])
+    onPrefetching?.()
+    prefetchModal(href, { method, data, headers, cacheFor })
+      .then(() => onPrefetched?.())
+      .catch(() => {})
+  }, [prefetchModal, href, method, data, headers, cacheFor, onPrefetching, onPrefetched])
 
   useEffect(() => {
     if (prefetchModes.includes('mount')) {

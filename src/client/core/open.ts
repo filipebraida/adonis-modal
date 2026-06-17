@@ -27,6 +27,7 @@ export interface HttpClientLike {
     data: Record<string, unknown> | undefined
     params: Record<string, unknown> | undefined
     headers: Record<string, string>
+    queryStringArrayFormat?: 'brackets' | 'indices'
   }): Promise<HttpResponseLike>
 }
 

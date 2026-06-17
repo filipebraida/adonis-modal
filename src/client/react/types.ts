@@ -29,6 +29,8 @@ export interface VisitOptions {
   props?: Record<string, unknown>
   /** Push a browser-history entry so the Back button closes this modal. */
   history?: boolean
+  /** How array values are serialized into the GET query string (default 'brackets'). */
+  queryStringArrayFormat?: 'brackets' | 'indices'
 }
 
 export interface ReloadOptions {

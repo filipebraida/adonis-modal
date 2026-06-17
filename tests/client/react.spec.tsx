@@ -527,6 +527,25 @@ test.group('react | headless', (group) => {
 test.group('react | prefetch', (group) => {
   group.each.teardown(() => cleanup())
 
+  test('emits onPrefetching then onPrefetched around a prefetch', async ({ assert }) => {
+    const events: string[] = []
+    renderApp({
+      client: clientReturning({ component: 'm', props: {}, key: 'k1' }),
+      ui: (
+        <ModalLink
+          href="/m"
+          prefetch="mount"
+          onPrefetching={() => events.push('start')}
+          onPrefetched={() => events.push('done')}
+        >
+          Open
+        </ModalLink>
+      ),
+    })
+
+    await waitFor(() => assert.deepEqual(events, ['start', 'done']))
+  })
+
   test('prefetch on mount serves the open from cache (single request)', async ({ assert }) => {
     let calls = 0
     const client: HttpClientLike = {
