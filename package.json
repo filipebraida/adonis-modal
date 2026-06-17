@@ -1,7 +1,7 @@
 {
   "name": "adonis-inertia-modal",
   "description": "Backend-driven modals for Inertia.js on AdonisJS",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "engines": {
     "node": ">=24.0.0"
   },
@@ -45,6 +45,14 @@
   ],
   "author": "Filipe Braida",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filipebraida/adonis-inertia-modal.git"
+  },
+  "homepage": "https://github.com/filipebraida/adonis-inertia-modal#readme",
+  "bugs": {
+    "url": "https://github.com/filipebraida/adonis-inertia-modal/issues"
+  },
   "devDependencies": {
     "@adonisjs/assembler": "^8.0.0",
     "@adonisjs/core": "^7.0.1",
